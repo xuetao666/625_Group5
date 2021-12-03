@@ -210,3 +210,5 @@ names(all_data)
 
 setwd(workpath)
 saveRDS(all_data,"AllData.RDS")
+
+#write.csv(all_data,"AllData.csv", row.names = FALSE)
