@@ -18,7 +18,7 @@ coalesce <- function(...) {
 
 ##########################
 #set macros:
-workpath<-"C:/Users/xueti/Dropbox (University of Michigan)/Umich/class/term 1/625/Final/625_Group/625_Group"
+workpath<-"C:/Users/xueti/Dropbox (University of Michigan)/Umich/class/term 1/625/Final/625_Group5/625_Group5"
 datapath<-"C:/Users/xueti/Dropbox (University of Michigan)/Umich/class/term 1/625/Final/Data"
 date<-gsub("-","_",Sys.Date())
 
@@ -207,3 +207,6 @@ all_data=full_join(all_data,exam_data,by="SEQN")
 names(all_data)
 all_data=full_join(all_data,ques_data,by="SEQN")
 names(all_data)
+
+setwd(workpath)
+saveRDS(all_data,"AllData.RDS")
