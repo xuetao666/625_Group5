@@ -1,68 +1,19 @@
-library(ggbiplot)
-library(factoextra)
-library(psych)
-library(reshape2)
-library(caret)
-library(e1071)
-library(rpart)
-library(rpart.plot)
-library(caret)
-library(glmnet)
-library(xgboost) # the main algorithm # for the sample dataset 
-library(Ckmeans.1d.dp) # for xgb.ggplot.importance
-library(dplyr)
-library(performanceEstimation)
-suppressMessages(library(shiny))
-suppressMessages(library(DT))
-suppressMessages(library(ggplot2))
-suppressMessages(library(ggpubr))
-suppressMessages(library(tidyverse))
-suppressMessages(library(dplyr))
-suppressMessages(library(DescTools))
-suppressMessages(library(PropCIs))
-suppressMessages(library(qpcR))
-suppressMessages(library(scales))
-suppressMessages(library(kableExtra))
-suppressMessages(library(broom))
-suppressMessages(library(logistf))
+setwd("/home/zhaoleo/625_group5")
+rm(list=ls(all=TRUE))  #same to clear all in stata
+cat("\014")
+x<-c("tidyverse","dplyr","xgboost","performanceEstimation","doParallel","caret")
+new.packages<-x[!(x %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages,dependencies = TRUE)
+lapply(x, require, character.only=T)
+year = seq(1999,2017,2)
+namelist = paste(rep("data",length(year)),year,rep("_",length(year)),year+1,sep = "")
 
-## Read Data
-setwd("C:/Users/wjhlang/Downloads")
-dataRDS <- readRDS("AllData (3).RDS")
-
-## Data Cleaning
-dataRDS$DIQ010 = ifelse(dataRDS$DIQ010 %in% c(7,9), NA, dataRDS$DIQ010)
-dataRDS = dataRDS[!is.na(dataRDS$DIQ010),]
-dataRDS$DIQ010 = ifelse(dataRDS$DIQ010 == 3, 1, dataRDS$DIQ010)
-dataRDS$DIQ010 = ifelse(dataRDS$DIQ010 == 2, 0, dataRDS$DIQ010)
-table(dataRDS$DIQ010) # Extremely Unbalanced
-dataRDS$DIQ010 = as.factor(dataRDS$DIQ010)
-dataRDS = dataRDS[,-1] # Remove SEQN
-
-Ylist=levels(as.factor(dataRDS$year))
-namelist = c()
-for(year in Ylist){
-  data=dataRDS[dataRDS$year==year,]
-  na = colSums(is.na(data))/nrow(data)*100
-  na=na[na<10]
-  data=data[complete.cases(data[,names(na)]),names(na)]
-  
-  print(year)
-  print(table(data$DIQ010))
-  
-  #Loop for factor names:
-  varname=c("BMAAMP")
-  for(varn in names(na)){
-    if(length(levels(as.factor(data[[varn]])))==1){
-      varname=c(varname,varn)
-    }
-  }
-  print(varname)
-  data=data[,!colnames(data) %in% varname]
-  
-  assign(paste0("data",year),data)
-  namelist = c(paste0("data",year),namelist)
+for(i in namelist){
+  temp =  readRDS(paste("data/",i,".rds",sep = ""))
+  eval(parse(text = paste0(i,"<- temp")))
 }
+
+
 
 ## XGBoost
 
@@ -131,7 +82,13 @@ myxgboost = function(train.data, test.data){
   return(list(model = fit.xg, var = vars, result = result))
 }
 
-for (i in namelist){
+cl = makeCluster(10)
+registerDoParallel(cl) 
+
+foreach(i = namelist) %dopar% {
+  lapply(x, require, character.only=T)
+  temp =  readRDS(paste("data/",i,".rds",sep = ""))
+  eval(parse(text = paste0(i,"<- temp")))
   tmp = get(i)
   train.index <- createDataPartition(tmp$DIQ010, p = 0.6, list= FALSE)
   train.data <- tmp[train.index ,]
@@ -152,5 +109,6 @@ for (i in namelist){
   
   result = myxgboost(train.data, test.data)
   
-  save(result, file=paste0("Xgboost_",i, ".RData"))
+  save(result, file=paste0("Xgboost_result/Xgboost_",i, ".RData"))
+  print(paste0("finish for data", i))
 }
