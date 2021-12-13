@@ -1,3 +1,4 @@
+library(tictoc)
 setwd("/home/zhaoleo/625_group5")
 rm(list=ls(all=TRUE))  #same to clear all in stata
 cat("\014")
@@ -58,7 +59,10 @@ lasso = function(train.data, test.data){
 cl = makeCluster(10)
 registerDoParallel(cl) 
 
+
+tic()
 foreach(i = namelist) %dopar% {
+  library(tictoc)
   lapply(x, require, character.only=T)
   temp =  readRDS(paste("data/",i,".rds",sep = ""))
   eval(parse(text = paste0(i,"<- temp")))
@@ -69,9 +73,11 @@ foreach(i = namelist) %dopar% {
   
   train.data = smote(DIQ010~., train.data, perc.over = 20, perc.under = 1)
   result = lasso(train.data, test.data)
-  
   save(result, file=paste0("Lasso_glmnet_result_20/Lasso_glmnet_", i, ".RData"))
   print(paste0("finish for data", i))
 }
-
+time_out = toc()
 stopCluster()
+
+save(time_out,file = "Lasso_glmnet_result_20/timeout.RData")
+
