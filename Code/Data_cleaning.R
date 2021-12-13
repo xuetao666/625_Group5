@@ -192,8 +192,11 @@ all_data$WTDRD1=ifelse(is.na(all_data$WTDRD1_x),all_data$WTDRD1_y,all_data$WTDRD
 all_data$DBQ095=ifelse(is.na(all_data$DBQ095.x),all_data$DBQ095.y,all_data$DBQ095.x)
 rmlist=c("WTDRD1.x","WTDRD1.y","WTDRD1.x.x",
          "WTDRD1.y.y","WTDRD1_x","WTDRD1_y","DBQ095.y",
-         "DBQ095.x","SDMVPSU")
+         "DBQ095.x","SDMVPSU","WTDRD1","WTINT2YR","WTINT4YR","WTDR2D","WTMEC2YR",
+         "WTMEC4YR","WTSAU4YR","WTSAU01","WTDR4YR","WTSCI2YR","WTSCI4YR")
 all_data=all_data[,!names(all_data) %in% rmlist]
+all_data=all_data[,!stri_detect_fixed(names(all_data),"WTSAU")]
+all_data=all_data[,!stri_detect_fixed(names(all_data),"WTSCI")]
 #Save data:
 #--------------------------------
 setwd(workpath)

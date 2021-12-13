@@ -5,7 +5,7 @@ date: "12/10/2021"
 output: pdf_document
 ---
 
-```{r,warning=F}
+```{r,warning=F,include=FALSE}
 ##########Clean up and import package:
 
 rm(list=ls(all=TRUE))  #same to clear all in stata
@@ -51,18 +51,20 @@ coalesce <- function(...) {
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_chunk$set(root.dir = normalizePath("C:/Users/wjhlang/Downloads"))
+#knitr::opts_chunk$set(root.dir = normalizePath("C:/Users/wjhlang/Downloads"))
+#knitr::opts_chunk$set(root.dir = normalizePath("../Results/Data"))
 ```
 
 ```{r}
-#data <- read.csv('AllData.csv',header = T) # Single quoted header
-dataRDS <- readRDS("/Users/ellie/Dropbox (University of Michigan)/Final/625_Group5/625_Group5/AllData.RDS")
-#dataRDS <- as.matrix(dataRDS)
-#data <- readRDS("AllData (2).rds")
+
+#dataRDS <- readRDS("/Users/ellie/Dropbox (University of Michigan)/Final/625_Group5/625_Group5/AllData.RDS")
+dataRDS <- readRDS("../Results/Data/AllData_v20211213_1.RDS")
+
 ```
 
 ## Data Cleaning
 ```{r}
+
 dataRDS$DIQ010 = ifelse(dataRDS$DIQ010 %in% c(7,9), NA, dataRDS$DIQ010)
 dataRDS = dataRDS[!is.na(dataRDS$DIQ010),]
 dataRDS$DIQ010 = ifelse(dataRDS$DIQ010 == 3, 1, dataRDS$DIQ010)
@@ -97,7 +99,7 @@ for(year in Ylist){
   data=data[,!colnames(data) %in% varname]
   
   assign(paste0("data",year),data)
-  saveRDS(data, paste0("data",year,".rds"))
+  saveRDS(data, paste0("../Results/Data/data",year,".rds"))
 }
 
 
