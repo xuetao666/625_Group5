@@ -13,7 +13,6 @@ for(i in namelist){
   eval(parse(text = paste0(i,"<- temp")))
 }
 
-
 ## Lasso
 
 lasso = function(train.data, test.data){
@@ -27,7 +26,8 @@ lasso = function(train.data, test.data){
   model <- glmnet(x, y, alpha = 1, family = "binomial",
                   lambda = cv.lasso$lambda.1se)
   # Names of selected variables
-  tmp = names(tmp[tmp[,1] != 0,] )[-1]
+  vars = coef(cv.lasso, cv.lasso$lambda.1se)
+  vars = names(vars[vars[,1] != 0,] )[-1]
   
   # Get sensitivity
   x.test <- model.matrix(DIQ010~., test.data)[,-1]
@@ -54,14 +54,15 @@ lasso = function(train.data, test.data){
   result = cm$byClass
   return(list(model = model, var = tmp, result = result))
 }
-
+  
 foreach(i = namelist) %dopar% {
+  lapply(x, require, character.only=T)
   tmp = get(i)
   train.index <- createDataPartition(tmp$DIQ010, p = 0.6, list= FALSE)
   train.data <- tmp[train.index ,]
   test.data <- tmp[-train.index,]
   
-  train.data = smote(DIQ010~., train.data, perc.over = 20, perc.under = 1)
+  train.data = smote(DIQ010~., train.data, perc.over = 12, perc.under = 1)
   
   result = lasso(train.data, test.data)
   
