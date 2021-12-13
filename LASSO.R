@@ -52,19 +52,26 @@ lasso = function(train.data, test.data){
   # Model accuracy
   cm = confusionMatrix(factor(predicted.classes),test.data$DIQ010, positive = "1")
   result = cm$byClass
-  return(list(model = model, var = tmp, result = result))
+  return(list(model = model, var = vars, result = result))
 }
-  
+
+cl = makeCluster(10)
+registerDoParallel(cl) 
+
 foreach(i = namelist) %dopar% {
   lapply(x, require, character.only=T)
+  temp =  readRDS(paste("data/",i,".rds",sep = ""))
+  eval(parse(text = paste0(i,"<- temp")))
   tmp = get(i)
   train.index <- createDataPartition(tmp$DIQ010, p = 0.6, list= FALSE)
   train.data <- tmp[train.index ,]
   test.data <- tmp[-train.index,]
   
-  train.data = smote(DIQ010~., train.data, perc.over = 12, perc.under = 1)
-  
+  train.data = smote(DIQ010~., train.data, perc.over = 20, perc.under = 1)
   result = lasso(train.data, test.data)
   
-  save(result, file=paste0(i, ".RData"))
+  save(result, file=paste0("Lasso_glmnet_result_20/Lasso_glmnet_", i, ".RData"))
+  print(paste0("finish for data", i))
 }
+
+stopCluster()
