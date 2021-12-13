@@ -1,0 +1,80 @@
+---
+title: "BIOS625_final"
+author: "Yili Wang"
+date: "12/11/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+my.data = readRDS("/Users/ellie/Dropbox (University of Michigan)/Final/625_Group5/625_Group5/AllData.RDS")
+my.data$response = ifelse((my.data$DIQ010 == 1) | (my.data$DIQ010 == 3), "Yes", ifelse(my.data$DIQ010 == 2, "No", NA))
+```
+
+```{r}
+years = names(table(my.data$year))
+data1 = my.data[which(my.data$year == years[1]),]
+
+dataByYear = list()
+missings = rep(NA, length(years))
+
+for (i in 1:length(years)) {
+    dataByYear[[years[i]]] = my.data[which(my.data$year == years[i]),]
+    a = colSums(is.na(dataByYear[[years[i]]]))/dim(dataByYear[[years[i]]])[1]
+    sub = which(a < 0.1)
+    dataByYear[[years[i]]] = dataByYear[[years[i]]][,sub]
+    missings[i] = sum(complete.cases(dataByYear[[years[i]]]))
+    
+    
+    subs = NULL
+    for (j in names(dataByYear[[years[i]]])) {
+        if (nlevels(as.factor(dataByYear[[years[i]]][[j]])) == 1){
+            subs = c(subs,j)
+        }
+    }
+    print(subs)
+    if (!is.null(subs)) {
+        dataByYear[[years[i]]] = dataByYear[[years[i]]][,-subs]
+    }
+    
+    
+    minor = dataByYear[[years[i]]][which(dataByYear[[years[i]]]$response == "Yes"),]
+    minor_dist = as.matrix(dist(minor))
+    for (j in 1:nrow(minor_dist)) {
+        ordered = order(minor_dist[j,])
+        selected = ordered[2:11]
+        dataByYear[[years[i]]] = rbind(dataByYear[[years[i]]], minor[selected,])
+    }
+}
+
+#saveRDS(dataByYear, file = "dataByYear.rds")
+```
+
+```{r}
+
+for (i in 1:length(years)) {
+    subs = NULL
+    for (j in names(dataByYear[[years[i]]])) {
+        if (nlevels(as.factor(dataByYear[[years[i]]][[j]])) == 1){
+            subs = c(subs,j)
+        }
+    }
+    print(subs)
+    if (!is.null(subs)) {
+        dataByYear[[years[i]]] = dataByYear[[years[i]]][,-subs]
+    }
+    glm(response ~ ., data = dataByYear[[years[i]]], family=binomial(link="logit"))
+}
+```
+
+```{r}
+
+```
+
+```{r}
+glm(response ~ ., data = my.data, family=binomial(link="logit"))
+```
+
