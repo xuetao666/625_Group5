@@ -1,6 +1,6 @@
-
+rm(list=ls(all=TRUE))  #same to clear all in stata
+cat("\014")
 x<-c("tidyverse","dplyr","caret","glmnet","performanceEstimation")
-    
 new.packages<-x[!(x %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages,dependencies = TRUE)
 lapply(x, require, character.only=T)
@@ -41,48 +41,48 @@ lapply(x, require, character.only=T)
 #   namelist = c(paste0("data",year),namelist)
 # }
 
-
+setwd("C:/Users/wjhlang/Downloads")
 year = seq(1999,2017,2)
 namelist = paste(rep("data",length(year)),year,rep("_",length(year)),year+1,sep = "")
 
 for(i in namelist){
-  temp =  readRDS(paste("data/",i,".rds",sep = ""))
-  eval(parse(text = paste0(i,"<- temp")))
+    temp =  readRDS(paste("data/",i,".rds",sep = ""))
+    eval(parse(text = paste0(i,"<- temp")))
 }
 ## Lasso
 
+set.seed(123)
 lasso = function(train.data, test.data){
-  x <- model.matrix(DIQ010~., train.data)[,-1]
-  # Convert the outcome (class) to a numerical variable
-  y <- ifelse(train.data$DIQ010 == 1, 1, 0)
-  cv.lasso <- cv.glmnet(x, y, alpha = 1, family = "binomial")
-  # Fit the final model on the training data
-  model <- glmnet(x, y, alpha = 1, family = "binomial",
-                  lambda = cv.lasso$lambda.1se)
-  # Names of selected variables
-  tmp = names(tmp[tmp[,1] != 0,] )[-1]
-  
-  # Get sensitivity
-  x.test <- model.matrix(DIQ010~., test.data)[,-1]
-  probabilities <- model %>% predict(newx = x.test, type="response")
-  predicted.classes <- ifelse(probabilities > 0.5, 1, 0)
-  # Model accuracy
-  cm = confusionMatrix(factor(predicted.classes),test.data$DIQ010, positive = "1")
-  result = cm$byClass
-  return(list(model = model, var = tmp, result = result))
-}
-  
-for (i in namelist){
-  tmp = get(i)
-  train.index <- createDataPartition(tmp$DIQ010, p = 0.6, list= FALSE)
-  train.data <- tmp[train.index ,]
-  test.data <- tmp[-train.index,]
-  
-  train.data = smote(DIQ010~., train.data, perc.over = 20, perc.under = 1)
-  print(i)
-  result = lasso(train.data, test.data)
-  
-  save(result, file=paste0(i, ".RData"))
+    x <- model.matrix(DIQ010~., train.data)[,-1]
+    # Convert the outcome (class) to a numerical variable
+    y <- ifelse(train.data$DIQ010 == 1, 1, 0)
+    cv.lasso <- cv.glmnet(x, y, alpha = 1, family = "binomial")
+    # Fit the final model on the training data
+    model <- glmnet(x, y, alpha = 1, family = "binomial",
+                    lambda = cv.lasso$lambda.1se)
+    # Names of selected variables
+    tmp = names(tmp[tmp[,1] != 0,] )[-1]
+    
+    # Get sensitivity
+    x.test <- model.matrix(DIQ010~., test.data)[,-1]
+    probabilities <- model %>% predict(newx = x.test, type="response")
+    predicted.classes <- ifelse(probabilities > 0.5, 1, 0)
+    # Model accuracy
+    cm = confusionMatrix(factor(predicted.classes),test.data$DIQ010, positive = "1")
+    result = cm$byClass
+    return(list(model = model, var = tmp, result = result))
 }
 
-sapply(train.data, class)
+for (i in namelist){
+    tmp = get(i)
+    train.index <- createDataPartition(tmp$DIQ010, p = 0.6, list= FALSE)
+    train.data <- tmp[train.index ,]
+    test.data <- tmp[-train.index,]
+    
+    train.data = smote(DIQ010~., train.data, perc.over = 20, perc.under = 1)
+    print(i)
+    result = lasso(train.data, test.data)
+    
+    save(result, file=paste0("Lasso_glmnet_", i, ".RData"))
+}
+
