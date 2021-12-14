@@ -1,5 +1,7 @@
 #-------------------------------------------------------------------------------
 setwd("/home/zhaoleo/625_Group5")
+
+# Install and load all packages needed
 rm(list=ls(all=TRUE))  #same to clear all in stata
 cat("\014")
 x<-c("tidyverse","dplyr","xgboost","performanceEstimation","doParallel","caret")
@@ -7,14 +9,16 @@ new.packages<-x[!(x %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages,dependencies = TRUE)
 lapply(x, require, character.only=T)
 #-------------------------------------------------------------------------------
+# Reading in the year data
 year = seq(1999,2017,2)
 namelist = paste(rep("data",length(year)),year,rep("_",length(year)),year+1,sep = "")
 for(i in namelist){
   temp =  readRDS(paste("Results/Data/",i,".rds",sep = ""))
   eval(parse(text = paste0(i,"<- temp")))
 }
-## XGBoost
+# Xgboost function returning the model, chosen parameters and confusion matrix
 myxgboost = function(train.data, test.data){
+  # Set matrix
   trainMatrix = xgb.DMatrix(data=train.data,label=train.label)
   testMatrix = xgb.DMatrix(data=test.data,label=test.label)
   # Define the parameters
@@ -37,16 +41,19 @@ myxgboost = function(train.data, test.data){
     watchlist=list(training=trainMatrix,testing=testMatrix),
     verbose=0
   )
+  # Predict and get classes based on predicted probabilities
   XGpred <- predict(fit.xg, newdata = testMatrix)
   XGprediction <- as.numeric(XGpred>0.5)
   # Use the predicted label with the highest probability
   cmXG<-confusionMatrix(factor(XGprediction),
                         factor(test.label), positive = '1')
-  # get the feature real names
+  # Get the feature real names
   names <- colnames(train.data)
-  # compute feature importance matrix
+  # Compute feature importance matrix
   importance_matrix = xgb.importance(feature_names = names, model = fit.xg)
+  # Choose the variables that contributes more than the average
   vars = importance_matrix$Feature[which(importance_matrix$Gain > 1/length(names))]
+  # Use the selected variables to fit the model again
   train.data=train.data[,colnames(train.data) %in% vars]
   test.data=test.data[,colnames(test.data) %in% vars]
   trainMatrix = xgb.DMatrix(data=train.data,label=train.label)
@@ -61,7 +68,7 @@ myxgboost = function(train.data, test.data){
   )
   XGpred <- predict(fit.xg, newdata = testMatrix)
   XGprediction <- as.numeric(XGpred>0.5)
-  # Use the predicted label with the highest probability
+  # Record the new confusion matrix
   cmXG<-confusionMatrix(factor(XGprediction),
                         factor(test.label), positive = '1')
   result = cmXG$byClass
@@ -70,13 +77,17 @@ myxgboost = function(train.data, test.data){
 time_out =rep(0,length(namelist))
 for(i in 1:length(namelist)){
   tic()
+  # Read in each year file
   temp =  readRDS(paste("Results/Data/",namelist[i],".rds",sep = ""))
   eval(parse(text = paste0(namelist[i],"<- temp")))
   tmp = get(namelist[i])
+  # Train test split
   train.index <- createDataPartition(tmp$DIQ010, p = 0.6, list= FALSE)
   train.data <- tmp[train.index ,]
   test.data <- tmp[-train.index,]
+  # Separate label and data(y and x)
   test.label = as.integer(test.data$DIQ010)-1
+  # Smote the imbalanced train data
   train.data = smote(DIQ010~., train.data, perc.over = 20, perc.under = 1)
   train.label = as.integer(train.data$DIQ010)-1
   train.data <- data.frame(lapply(train.data, as.numeric))
@@ -85,6 +96,7 @@ for(i in 1:length(namelist)){
   train.data=as.matrix(train.data)
   test.data$DIQ010 = NULL
   test.data=as.matrix(test.data)
+  # myxgboost function
   result = myxgboost(train.data, test.data)
   time_return = toc()
   save(result, file=paste0("Results/Selection Results/Xgboost_result/Xgboost_",namelist[i], ".RData"))

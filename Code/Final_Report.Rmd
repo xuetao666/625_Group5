@@ -42,7 +42,6 @@ suppressMessages(library(performanceEstimation))
 ```{r, echo=FALSE}
 # Read original data
 dataRDS = readRDS("Data/AllData_v20211213_1.rds")
-
 # Data cleaning
 dataRDS$DIQ010 = ifelse(dataRDS$DIQ010 %in% c(7,9), NA, dataRDS$DIQ010)
 dataRDS = dataRDS[!is.na(dataRDS$DIQ010),]
@@ -57,7 +56,6 @@ dataRDS = dataRDS[,-1]
 # Read Lasso Results
 year = seq(1999, 2017,2)
 namelist = paste("Lasso_glmnet_",rep("data",length(year)),year,rep("_",length(year)),year+1,sep = "")
-
 # Store the results in tbl
 tbl=c()
 for(i in namelist){
@@ -66,15 +64,12 @@ for(i in namelist){
   assign(i,result)
   #eval(parse(text = paste0(i,"= temp")))
 }
-
 # Store the important variables
 resultvarslasso = list()
-
 for(i in namelist){
   tmp = get(i)
   resultvarslasso[[i]] = tmp$var
 }
-
 # Get the common variables
 comvarlasso = unlist(resultvarslasso)
 comvarlasso = sort(table(comvarlasso), decreasing = T)
@@ -85,22 +80,18 @@ comvarlasso = names(comvarlasso[comvarlasso>8])
 ```{r, echo=FALSE}
 year = seq(1999, 2017,2)
 namelist = paste("Xgboost_",rep("data",length(year)),year,rep("_",length(year)),year+1,sep = "")
-
 for(i in namelist){
   load(paste("Results/",i,".RData",sep = ""))
   tbl=rbind(tbl,result$result)
   assign(i,result)
   #eval(parse(text = paste0(i,"= temp")))
 }
-
 # Store the important variables
 resultvarsxgboost = list()
-
 for(i in namelist){
   tmp = get(i)
   resultvarsxgboost[[i]] = tmp$var
 }
-
 # Get the common variables
 comvarxgboost = unlist(resultvarsxgboost)
 comvarxgboost = sort(table(comvarxgboost), decreasing = T)
@@ -111,7 +102,6 @@ comvarxgboost = names(comvarxgboost[comvarxgboost>1])
 ```{r}
 year = seq(1999,2017,2)
 namelist = paste(rep("data",length(year)),year,rep("_",length(year)),year+1,sep = "")
-
 # Store the important variables
 yearvars= list()
 for(i in namelist){
@@ -120,66 +110,46 @@ for(i in namelist){
 }
 yearvars = unlist(yearvars)
 yearvars = sort(table(yearvars), decreasing = T)
-
 # Calculate variable percentage of frequencies and get the those appears more than 30% times
 comvar1 = comvarxgboost/yearvars[names(yearvars)%in%names(comvarxgboost)]
 comvar2 = comvarlasso/yearvars[names(yearvars)%in%names(comvarlasso)]
 comvar1 = names(comvar1[comvar1>0.3])
 comvar2 = names(comvar2[comvar2>0.3])
-
 # Overlap
 overlap = comvar2[comvar2 %in% comvar1]
 # Remove "RIDAGEEX"
 overlap = overlap[overlap %!in% c("RIDAGEEX","SDMVSTRA", "MCQ010")]
-
 # Include response
 overlap = c("DIQ010", overlap)
-
-
 # Select the important variables obtained from Lasso
 dataRDS=dataRDS[,colnames(dataRDS) %in% overlap]
-
 # Remove those with lots of NA
 miss = colSums(is.na(dataRDS))
-
 dataRDS=dataRDS[,colnames(dataRDS) %in% names(miss[miss < 10000])]
-
 # Complete cases
 complete = dataRDS[complete.cases(dataRDS),]
-
-
 # logistic regression
 library(caret)
 train.index = createDataPartition(complete$DIQ010, p = 0.6, list= FALSE)
 train.data = complete[train.index ,]
 train.data = smote(DIQ010~., train.data, perc.over = 20, perc.under = 1)
 test.data = complete[-train.index,]
-
 lmod = glm(DIQ010~.,data = train.data, family="binomial",maxit=50)
-
-
 x.test = test.data[,which(colnames(test.data) != "DIQ010")]
 probabilities = predict(lmod, newdata = x.test, type = "response")
-
 predicted.classes = ifelse(probabilities > 0.5, 1, 0)
-
 cm = confusionMatrix(factor(predicted.classes),test.data$DIQ010, positive = "1");cm
-
 # Lasso
 x <- model.matrix(DIQ010~., train.data)[,-1]
 # Convert the outcome (DIQ010) to a numerical variable
 y <- ifelse(train.data$DIQ010 == 1, 1, 0)
 cv.lasso <- cv.glmnet(x, y, alpha = 1, family = "binomial")
-
-
 # Fit the final model on the training data
 model <- glmnet(x, y, alpha = 1, family = "binomial",
                 lambda = cv.lasso$lambda.1se)
-
 # Get sensitivity
 x.test <- model.matrix(DIQ010~., test.data)[,-1]
 probabilities <- model %>% predict(newx = x.test, type="response")
-
 cutoffs = seq(0.01, 0.99, 0.01)
 accus = c()
 sensitivities = c()
@@ -192,25 +162,18 @@ for (i in 1:length(cutoffs)) {
   specificities = c(specificities, cm.k$byClass['Specificity'])
 }
 euclid = sqrt((1-specificities)^2 + (sensitivities-1)^2)
-
 predicted.classes <- ifelse(probabilities > cutoffs[which.min(euclid)], 1, 0)
 # Model accuracy
 cm = confusionMatrix(factor(predicted.classes),test.data$DIQ010, positive = "1");cm
-
-
 # Xgboost
 test.label = as.integer(test.data$DIQ010)-1
 train.label = as.integer(train.data$DIQ010)-1
-  
 train.data <- data.frame(lapply(train.data, as.numeric))
 test.data <- data.frame(lapply(test.data, as.numeric))
-
 train.data$DIQ010 = NULL
 train.data=as.matrix(train.data)
-
 test.data$DIQ010 = NULL
 test.data=as.matrix(test.data)
-
 trainMatrix = xgb.DMatrix(data=train.data,label=train.label)
   testMatrix = xgb.DMatrix(data=test.data,label=test.label)
 # Define the parameters
