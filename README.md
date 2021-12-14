@@ -10,6 +10,6 @@ Xueting Tao, Jinhao Wang, Yili Wang, Dongyang Zhao
 * Data_cleaning.R: read and clean raw NHANES data, output to Result/Data/
 * Initial_Method.R: Code used for data and method exploration
 * Method codes.R:
- + a. LASSO.R: Lasso method used in cluster
- + b. XGBOOST.R: XGBoost method used in cluster
+ ** a. LASSO.R: Lasso method used in cluster
+ ** b. XGBOOST.R: XGBoost method used in cluster
 * Final_Report.rmd: Used for readin previous result and generate final report
