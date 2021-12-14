@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" modified="2021-12-14T23:35:45.097Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36" etag="DPHI9VQRSdkfknzsnETb" version="15.9.6" type="github">
+<mxfile host="app.diagrams.net" modified="2021-12-14T23:41:12.017Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36" etag="3Nk-2ekkRqnuT-HLBr7C" version="15.9.6" type="github">
   <diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">
-    <mxGraphModel dx="1235" dy="1847" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1312" dy="1853" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="WIyWlLk6GJQsqaUBKTNV-0" />
         <mxCell id="WIyWlLk6GJQsqaUBKTNV-1" parent="WIyWlLk6GJQsqaUBKTNV-0" />
@@ -39,7 +39,7 @@
         <mxCell id="XHGAcSni-Kbprlse5u6Y-29" value="" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.annotation_2;align=left;labelPosition=right;pointerEvents=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="580" y="50" width="70" height="100" as="geometry" />
         </mxCell>
-        <mxCell id="XHGAcSni-Kbprlse5u6Y-31" value="LASSO" style="rounded=1;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+        <mxCell id="XHGAcSni-Kbprlse5u6Y-31" value="LASSO Logistic" style="rounded=1;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="640" y="30" width="110" height="40" as="geometry" />
         </mxCell>
         <mxCell id="XHGAcSni-Kbprlse5u6Y-32" value="XGBOOST" style="rounded=1;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
@@ -53,7 +53,7 @@
         <mxCell id="XHGAcSni-Kbprlse5u6Y-33" value="" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.annotation_1;align=left;pointerEvents=1;rotation=-180;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="750" y="50" width="20" height="100" as="geometry" />
         </mxCell>
-        <mxCell id="XHGAcSni-Kbprlse5u6Y-36" value="Find overlapping results by year" style="rounded=1;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+        <mxCell id="XHGAcSni-Kbprlse5u6Y-36" value="Combine overlapping results by year" style="rounded=1;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="800" y="75" width="110" height="45" as="geometry" />
         </mxCell>
         <mxCell id="XHGAcSni-Kbprlse5u6Y-39" value="Delete useless variable based on selection result" style="rounded=1;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
@@ -107,7 +107,7 @@
         <mxCell id="XHGAcSni-Kbprlse5u6Y-56" value="" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.annotation_2;align=left;labelPosition=right;pointerEvents=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="910" y="50" width="100" height="100" as="geometry" />
         </mxCell>
-        <mxCell id="XHGAcSni-Kbprlse5u6Y-57" value="LASSO" style="rounded=1;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+        <mxCell id="XHGAcSni-Kbprlse5u6Y-57" value="LASSO Logistic" style="rounded=1;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="1010" y="25" width="120" height="40" as="geometry" />
         </mxCell>
         <mxCell id="XHGAcSni-Kbprlse5u6Y-59" value="Logistic" style="rounded=1;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
@@ -134,13 +134,13 @@
         <mxCell id="XHGAcSni-Kbprlse5u6Y-69" value="Model fit comparison" style="rounded=1;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="870" y="-10" width="120" height="35" as="geometry" />
         </mxCell>
-        <mxCell id="XHGAcSni-Kbprlse5u6Y-70" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.46;exitY=0.979;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.159;entryY=0.529;entryDx=0;entryDy=0;entryPerimeter=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="XHGAcSni-Kbprlse5u6Y-69" target="XHGAcSni-Kbprlse5u6Y-56" edge="1">
+        <mxCell id="XHGAcSni-Kbprlse5u6Y-70" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.46;exitY=0.979;exitDx=0;exitDy=0;exitPerimeter=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="XHGAcSni-Kbprlse5u6Y-69" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="990" y="160" as="sourcePoint" />
-            <mxPoint x="1040" y="110" as="targetPoint" />
+            <mxPoint x="925" y="100" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="XHGAcSni-Kbprlse5u6Y-71" value="Comparison results" style="rounded=1;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+        <mxCell id="XHGAcSni-Kbprlse5u6Y-71" value="Model Evaluation" style="rounded=1;whiteSpace=wrap;html=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="1180" y="70" width="120" height="60" as="geometry" />
         </mxCell>
       </root>
