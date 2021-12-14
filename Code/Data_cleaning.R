@@ -3,12 +3,9 @@
 ##Data result goes to Results/Data
 
 ##########Clean up and import package:
-
 rm(list=ls(all=TRUE))  #same to clear all in stata
 cat("\014")
-
 x<-c("plyr","dplyr", "haven","stringi","stringr")
-
 new.packages<-x[!(x %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 
@@ -18,16 +15,13 @@ coalesce <- function(...) {
     x[which(!is.na(x))[1]]
   })
 }
-
 ##########################
 #set macros:
 workpath<-"C:/Users/xueti/Dropbox (University of Michigan)/Umich/class/term 1/625/Final/625_Group5/625_Group5/Results/Data"
 datapath<-"C:/Users/xueti/Dropbox (University of Michigan)/Umich/class/term 1/625/Final/Data"
 date<-gsub("-","_",Sys.Date())
-
 #########################
 #set path and create result folder, import data:
-
 #---------------------Step1. Import and merge the data-------------------------
 #-------------------------------------------------------------------------------
 setwd(datapath)
@@ -54,7 +48,6 @@ name1=colnames(demo_data)
 name1=name1[!stri_detect_fixed(name1,"WTMREP")]
 name1=name1[!stri_detect_fixed(name1,"WTIREP")]
 demo_data=demo_data[,colnames(demo_data) %in% name1]
-
 #Diatery:
 #--------------------------------
 setwd("Diatery")
@@ -90,11 +83,9 @@ for(year in yearList){ ##Get into year
 }
 sum(duplicated(dia_data$SEQN))
 setwd('..')
-
 #Examination
 #--------------------------------
 #Hearing, only use the first file for useful information
-
 setwd("Examination")
 fileRdList=c("AUX","BPX","BMX","VIX")
 fileNolist=c("AUXWBR","AUXAR","AUXTYM")
@@ -127,11 +118,9 @@ for(year in yearList){ ##Get into year
 }
 sum(duplicated(exam_data$SEQN))
 setwd('..')
-
 #Questionnaires
 #--------------------------------
 #Hearing, only use the first file for useful information
-
 setwd("Questionnaires")
 fileRdList=c("ACQ","ALQ","AUQ","BPQ","CDQ","CBQ","HSQ","DEQ","DIQ","DBQ","DUQ",
              "FCQ","FSQ","HIQ","HUQ","HOQ","IMQ","KIQ","MCQ","CIQMDEP","OCQ",
@@ -177,7 +166,6 @@ for(year in yearList){ ##Get into year
 }
 sum(duplicated(ques_data$SEQN))
 setwd('..')
-
 #Merge all data together:
 #--------------------------------
 all_data=full_join(demo_data,dia_data,by="SEQN")
@@ -197,7 +185,37 @@ rmlist=c("WTDRD1.x","WTDRD1.y","WTDRD1.x.x",
 all_data=all_data[,!names(all_data) %in% rmlist]
 all_data=all_data[,!stri_detect_fixed(names(all_data),"WTSAU")]
 all_data=all_data[,!stri_detect_fixed(names(all_data),"WTSCI")]
+#Clean DIQ010
+all_data$DIQ010 = ifelse(all_data$DIQ010 %in% c(7,9), NA, all_data$DIQ010)
+all_data = all_data[!is.na(all_data$DIQ010),]
+all_data$DIQ010 = ifelse(all_data$DIQ010 == 3, 1, all_data$DIQ010)
+all_data$DIQ010 = ifelse(all_data$DIQ010 == 2, 0, all_data$DIQ010)
+table(all_data$DIQ010) # Extremely Unbalanced
+all_data$DIQ010 = as.factor(all_data$DIQ010)
+all_data = all_data[,-1]
 #Save data:
 #--------------------------------
 setwd(workpath)
+#Save Overall
 saveRDS(all_data,"AllData_v20211213_1.RDS")
+#Save in year
+Ylist=levels(as.factor(all_data$year))
+for(year in Ylist){
+  data=all_data[all_data$year==year,]
+  na = colSums(is.na(data))/nrow(data)*100
+  na=na[na<10]
+  data=data[complete.cases(data[,names(na)]),names(na)]
+  print(year)
+  print(table(data$DIQ010))
+  #Loop for factor names:
+  varname=c("BMAAMP")
+  for(varn in names(na)){
+    if(length(levels(as.factor(data[[varn]])))==1){
+      varname=c(varname,varn)
+    }
+  }
+  print(varname)
+  data=data[,!colnames(data) %in% varname]
+  assign(paste0("data",year),data)
+  saveRDS(data, paste0("data",year,".rds"))
+}

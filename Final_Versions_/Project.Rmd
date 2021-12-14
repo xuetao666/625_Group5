@@ -11,10 +11,10 @@ output: pdf_document
 rm(list=ls(all=TRUE))  #same to clear all in stata
 cat("\014")
 
-#x<-c("DT","ggplot2","ggpubr","tidyverse","dplyr","DescTools","PropCIs","qpcR","scales","kableExtra","broom","logistf","ggbiplot","factoextra","psych","reshape2","caret","e1071","rpart","rpart.plot","glmnet","xgboost","Ckmeans.1d.dp")
+x<-c("DT","ggplot2","ggpubr","tidyverse","dplyr","DescTools","PropCIs","qpcR","scales","kableExtra","broom","logistf","ggbiplot","factoextra","psych","reshape2","caret","e1071","rpart","rpart.plot","glmnet","xgboost","Ckmeans.1d.dp")
 
-# new.packages<-x[!(x %in% installed.packages()[,"Package"])]
-# if(length(new.packages)) install.packages(new.packages)
+new.packages<-x[!(x %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
 
 
 lapply(x, require, character.only=T)
@@ -27,7 +27,6 @@ coalesce <- function(...) {
  library(factoextra)
  library(psych)
  library(reshape2)
- library(caret)
  library(e1071)
  library(rpart)
  library(rpart.plot)
@@ -35,7 +34,7 @@ coalesce <- function(...) {
  library(glmnet)
  library(xgboost) # the main algorithm # for the sample dataset 
  library(Ckmeans.1d.dp) # for xgb.ggplot.importance
- library(dplyr)
+library(performanceEstimation)
  suppressMessages(library(shiny))
  suppressMessages(library(DT))
  suppressMessages(library(ggplot2))
@@ -49,6 +48,7 @@ coalesce <- function(...) {
  suppressMessages(library(kableExtra))
  suppressMessages(library(broom))
  suppressMessages(library(logistf))
+ library(RColorBrewer)
 ```
 
 ```{r setup, include=FALSE}
@@ -58,8 +58,9 @@ knitr::opts_chunk$set(root.dir = normalizePath("C:/Users/wjhlang/Downloads"))
 
 ```{r}
 #data <- read.csv('AllData.csv',header = T) # Single quoted header
-dataRDS <- readRDS("/Users/ellie/Dropbox (University of Michigan)/Final/625_Group5/625_Group5/AllData.RDS")
+dataRDS <- readRDS("AllData (3).rds")
 #dataRDS <- as.matrix(dataRDS)
+#data <- readRDS("AllData (2).rds")
 ```
 
 ## Data Cleaning
@@ -67,8 +68,10 @@ dataRDS <- readRDS("/Users/ellie/Dropbox (University of Michigan)/Final/625_Grou
 dataRDS$DIQ010 = ifelse(dataRDS$DIQ010 %in% c(7,9), NA, dataRDS$DIQ010)
 dataRDS = dataRDS[!is.na(dataRDS$DIQ010),]
 dataRDS$DIQ010 = ifelse(dataRDS$DIQ010 == 3, 1, dataRDS$DIQ010)
+dataRDS$DIQ010 = ifelse(dataRDS$DIQ010 == 2, 0, dataRDS$DIQ010)
 table(dataRDS$DIQ010) # Extremely Unbalanced
 dataRDS$DIQ010 = as.factor(dataRDS$DIQ010)
+dataRDS = dataRDS[,-1]
 
 
 # na = colSums(is.na(dataRDS))/nrow(dataRDS)*100
@@ -86,7 +89,7 @@ for(year in Ylist){
   print(table(data$DIQ010))
   
   #Loop for factor names:
-  varname=c()
+  varname=c("BMAAMP")
   for(varn in names(na)){
     if(length(levels(as.factor(data[[varn]])))==1){
       varname=c(varname,varn)
@@ -101,6 +104,16 @@ for(year in Ylist){
 
 
 ```
+## SMOTE
+```{r}
+library(DMwR)
+library(performanceEstimation)
+data1 = smote(DIQ010~., data1999_2000, perc.over = 20, perc.under = 1)
+
+table(data1$DIQ010)
+
+```
+
 
 ## Outlier Detection
 ```{r}
@@ -159,35 +172,71 @@ kable(df.cuv %>% round(3),
 
 ## Random Forest
 ```{r}
+set.seed(1)
 library(caret)
 library(randomForest)
-set.seed(1)
 # 80% as training data; 20% as testing
 train.index <- createDataPartition(data1999_2000$DIQ010, p = 0.8, list= FALSE)
 train.data <- data1999_2000[train.index ,]
 test.data <- data1999_2000[-train.index,]
-Varibale.Importance =randomForest(DIQ010~., data = train.data,ntree = 2000,
-mtry = 19,importance = TRUE)
-rf.pre = predict(Varibale.Importance, test.data,type="class")
+Variable.Importance =randomForest(DIQ010~., data = train.data,ntree = 2000,
+mtry = 19,importance = TRUE,classwt = c(1-0.05853659,0.05853659))
+rf.pre = predict(Variable.Importance, test.data,type="class")
 #confusion matrix
-rp <- predict(Varibale.Importance, train.data,type="class")
+rp <- predict(Variable.Importance, train.data,type="class")
 ft <- confusionMatrix(rp,train.data$DIQ010)
-cm.f <- confusionMatrix(rf.pre,test.data$DIQ010);cm.f
-varImpPlot(Varibale.Importance)
+cm.f <- confusionMatrix(rf.pre,test.data$DIQ010,positive='1');cm.f
+varImpPlot(Variable.Importance)
+```
+
+```{r}
+## Random Forest
+set.seed(1)
+library(caret)
+library(randomForest)
+library(performanceEstimation)
+# 80% as training data; 20% as testing
+train.index <- createDataPartition(data1999_2000$DIQ010, p = 0.6, list= FALSE)
+
+train.data <- data1999_2000[train.index ,]
+
+test.data <- data1999_2000[-train.index,]
+data1 = smote(DIQ010~., train.data, perc.over = 20, perc.under = 1)
+
+
+fit.svm = svm(DIQ010~., data1,
+ probability = TRUE,cost = 26)
+pre.svm = predict(fit.svm, test.data,
+ decision.values = TRUE, probability = TRUE)
+#confusion table
+sp <- predict(fit.svm, data1,
+ decision.values = TRUE, probability = TRUE)
+sm <- confusionMatrix(sp,data1$DIQ010)
+cm.s<- confusionMatrix(pre.svm,test.data$DIQ010);cm.s
+
+Variable.Importance =randomForest(DIQ010~., data = data1, ntree = 2000,
+mtry = 19,importance = TRUE)
+rf.pre = predict(Variable.Importance, test.data,type="class")
+#confusion matrix
+rp <- predict(Variable.Importance, train.data,type="class")
+ft <- confusionMatrix(rp,train.data$DIQ010)
+cm.f <- confusionMatrix(rf.pre,test.data$DIQ010, positive = '1');cm.f
+varImpPlot(Variable.Importance)
+
 ```
 
 ## SVM
 ```{r}
 #library(e1071)
-fit.svm = svm(class~., train.data,
+fit.svm = svm(DIQ010~., train.data,
  probability = TRUE,cost = 26)
 pre.svm = predict(fit.svm, test.data,
  decision.values = TRUE, probability = TRUE)
 #confusion table
 sp <- predict(fit.svm, train.data,
  decision.values = TRUE, probability = TRUE)
-sm <- confusionMatrix(sp,train.data$class)
-cm.s<- confusionMatrix(pre.svm,test.data$class);cm.s
+sm <- confusionMatrix(sp,train.data$DIQ010)
+cm.s<- confusionMatrix(pre.svm,test.data$DIQ010);cm.s
 ```
 
 ## Decision Tree
@@ -211,40 +260,40 @@ knitr::kable(df3 %>% round(3),
 ```{r}
 # library(caret)
 # library(glmnet)
+set.seed(123)
 # Dummy code categorical predictor variables
-x <- model.matrix(class~., train.data)[,-1]
+x <- model.matrix(DIQ010~., data1)[,-1]
 # Convert the outcome (class) to a numerical variable
-y <- ifelse(train.data$class == "ckd", 1, 0)
+y <- ifelse(data1$DIQ010 == 1, 1, 0)
 cv.lasso <- cv.glmnet(x, y, alpha = 1, family = "binomial")
 # Fit the final model on the training data
 model <- glmnet(x, y, alpha = 1, family = "binomial",
  lambda = cv.lasso$lambda.min)
 # Display regression coefficients
 coef(model)
-x.test <- model.matrix(class ~., test.data)[,-1]
-probabilities <- model %>% predict(newx = x.test)
-predicted.classes <- ifelse(probabilities > 0.5, "ckd", "notckd")
+x.test <- model.matrix(DIQ010~., test.data)[,-1]
+probabilities <- model %>% predict(newx = x.test, type="response")
+predicted.classes <- ifelse(probabilities > 0.5, 1, 0)
 # Model accuracy
-observed.classes <- test.data$class
+observed.classes <- test.data$DIQ010
 mean(predicted.classes == observed.classes)
-set.seed(123)
-cv.lasso <- cv.glmnet(x, y, alpha = 1, family = "binomial")
+
 plot(cv.lasso)
 coef(cv.lasso, cv.lasso$lambda.min)
 coef(cv.lasso, cv.lasso$lambda.1se)
+tmp = coef(cv.lasso, cv.lasso$lambda.1se)
+tmp = names(tmp[tmp[,1] != 0,] )[-1]
 ## Lasso min
 # Final model with lambda.min
-lasso.model <- glmnet(x, y, alpha = 1, family = "binomial",
- lambda = cv.lasso$lambda.min)
+# model
 # Make prediction on test data
-x.test <- model.matrix(class ~., test.data)[,-1]
-probabilities <- lasso.model %>% predict(newx = x.test)
-predicted.classes <- ifelse(probabilities > 0.5, "ckd", "notckd")
+probabilities <- model %>% predict(newx = x.test, type="response")
+predicted.classes <- ifelse(probabilities > 0.5, 1, 0)
 # Model accuracy
-cm <- confusionMatrix(factor(predicted.classes),test.data$class);cm
-tLL <- lasso.model$nulldev - deviance(lasso.model)
-k <- lasso.model$df
-n <- lasso.model$nobs
+cm <- confusionMatrix(factor(predicted.classes),test.data$DIQ010);cm
+tLL <- model$nulldev - deviance(model)
+k <- model$df
+n <- model$nobs
 AICc <- -tLL+2*k+2*k*(k+1)/(n-k-1)
 AICc
 ## Lasso 1se
@@ -252,15 +301,55 @@ AICc
 lasso.model <- glmnet(x, y, alpha = 1, family = "binomial",
  lambda = cv.lasso$lambda.1se)
 # Make prediction on test data
-x.test <- model.matrix(class ~., test.data)[,-1]
-probabilities <- lasso.model %>% predict(newx = x.test)
-predicted.classes <- ifelse(probabilities > 0.5, "ckd", "notckd")
+x.test <- model.matrix(DIQ010~., test.data)[,-1]
+probabilities <- lasso.model %>% predict(newx = x.test, type="response")
+#predicted.classes <- ifelse(probabilities > 0.4, 1, 0)
 # Model accuracy
-cm.k <- confusionMatrix(factor(predicted.classes),test.data$class);cm.k
+cutoffs = seq(0.01, 0.99, 0.01)
+accus = c()
+sensitivities = c()
+specificities = c()
+for (i in 1:length(cutoffs)) {
+  predicted.classes <- ifelse(probabilities > cutoffs[i], 1, 0)
+  cm.k <- confusionMatrix(factor(predicted.classes),test.data$DIQ010);cm.k
+  accus = c(accus,cm.k$overall['Accuracy'])
+  sensitivities = c(sensitivities, cm.k$byClass['Sensitivity'])
+  specificities = c(specificities, cm.k$byClass['Specificity'])
+}
+euclid = sqrt((1-specificities)^2 + (sensitivities-1)^2)
+cutoffs[which.min(euclid)]
+sensitivities[which.min(euclid)]
+specificities[which.min(euclid)]
+accus[which.min(euclid)]
+max(accus)
+#cm.k <- confusionMatrix(factor(predicted.classes),test.data$DIQ010);cm.k
 tLL <- lasso.model$nulldev - deviance(lasso.model)
 k <- lasso.model$df
 n <- lasso.model$nobs
 AICc <- -tLL+2*k+2*k*(k+1)/(n-k-1)
+AICc
+```
+
+## Ridge
+
+```{r}
+lambda_seq <- 10^seq(2, -2, by = -.1)
+# Using glmnet function to build the ridge regression in r
+fit <- glmnet(x, y, alpha = 0, lambda  = lambda_seq)
+ridge_cv <- cv.glmnet(x, y, alpha = 0, lambda = lambda_seq)
+# Best lambda value
+best_lambda <- ridge_cv$lambda.min
+best_lambda
+
+best_ridge <- glmnet(x, y, alpha = 0, lambda = best_lambda)
+coef(ridge_cv, ridge_cv$lambda.min)
+coef(best_ridge)
+
+
+probabilities <- best_ridge %>% predict(newx = x.test, type="response")
+predicted.classes <- ifelse(probabilities > 0.5, 1, 0)
+# Model accuracy
+cm <- confusionMatrix(factor(predicted.classes),test.data$DIQ010);cm
 ```
 
 ## XGBoost
@@ -269,15 +358,41 @@ AICc <- -tLL+2*k+2*k*(k+1)/(n-k-1)
 # library(xgboost) # the main algorithm # for the sample dataset 
 # library(Ckmeans.1d.dp) # for xgb.ggplot.importance
 # library(dplyr)
-ckd.num <- data.frame(lapply(ckd.rearrange, as.numeric))
-class <- ckd.num$class
-label <- as.integer(ckd.num$class)-1
-ckd.num$class = NULL
-train.index <- sample(nrow(ckd.num),floor(0.8*nrow(ckd.num)))
-train.data = as.matrix(ckd.num[train.index,])
-train.label = label[train.index]
-test.data = as.matrix(ckd.num[-train.index,])
-test.label = label[-train.index]
+
+train.index <- createDataPartition(data1999_2000$DIQ010, p = 0.6, list= FALSE)
+train.data <- data1999_2000[train.index ,]
+test.data <- data1999_2000[-train.index,]
+test.label = as.integer(test.data$DIQ010)-1
+
+train.data = smote(DIQ010~., train.data, perc.over = 20, perc.under = 1)
+train.label = as.integer(train.data$DIQ010)-1
+
+train.data <- data.frame(lapply(train.data, as.numeric))
+test.data <- data.frame(lapply(test.data, as.numeric))
+
+train.data$DIQ010 = NULL
+train.data=as.matrix(train.data)
+
+
+test.data$DIQ010 = NULL
+test.data=as.matrix(test.data)
+
+# 
+# label <- as.integer(data.num$DIQ010)-1
+# data.num$DIQ010 = NULL
+# train.index <- sample(nrow(data.num),floor(0.6*nrow(data.num)))
+# train.data = data.num[train.index,]
+# train.data = smote(DIQ010~., train.data, perc.over = 20, perc.under = 1)
+# 
+# train.label = label[train.index]
+# 
+# train.data = cbind(train.data, train.label)
+# 
+# train.data$train.label = NULL
+
+# 
+# test.data = as.matrix(data.num[-train.index,])
+# test.label = label[-train.index]
 #set matrix
 trainMatrix = xgb.DMatrix(data=train.data,label=train.label)
 testMatrix = xgb.DMatrix(data=test.data,label=test.label)
@@ -306,9 +421,9 @@ XGpred <- predict(fit.xg, newdata = testMatrix)
 XGprediction <- as.numeric(XGpred>0.5)
 # Use the predicted label with the highest probability
 cmXG<-confusionMatrix(factor(XGprediction),
- factor(test.label));cmXG
+ factor(test.label), positive = '1');cmXG
 # get the feature real names
-names <- colnames(ckd.num)
+names <- colnames(train.data)
 # compute feature importance matrix
 importance_matrix = xgb.importance(feature_names = names, model = fit.xg)
 #overfitting check
@@ -320,14 +435,14 @@ kable(caption = "Overfitting Check")%>%
 #variable importance plot
 # plot
 n.col <- 26
-my.col2 <- colorRampPalette(brewer.pal(9,"Set2"))(n.col)
+my.col2 <- colorRampPalette(brewer.pal(8,"Set2"))(n.col)
 xgb.ggplot.importance(importance_matrix)+scale_fill_manual(values = my.col2)+theme_classic()
 
 ```
 
 ## Logisitic Regression
 ```{r}
-lmod <- glm(class~.,data = train, family="binomial",maxit=50)
+lmod <- glm(DIQ010~.,data = data1, family="binomial",maxit=50)
 summary(lmod)
 car::vif(lmod)
 newmod <- step(lmod)
