@@ -1,4 +1,4 @@
-setwd("/home/zhaoleo/625_group5")
+setwd("/home/zhaoleo/625_Group5")
 rm(list=ls(all=TRUE))  #same to clear all in stata
 cat("\014")
 x<-c("tidyverse","dplyr","xgboost","performanceEstimation","doParallel","caret")
@@ -9,7 +9,7 @@ year = seq(1999,2017,2)
 namelist = paste(rep("data",length(year)),year,rep("_",length(year)),year+1,sep = "")
 
 for(i in namelist){
-  temp =  readRDS(paste("data/",i,".rds",sep = ""))
+  temp =  readRDS(paste("Results/Data/",i,".rds",sep = ""))
   eval(parse(text = paste0(i,"<- temp")))
 }
 
@@ -81,15 +81,13 @@ myxgboost = function(train.data, test.data){
   result = cmXG$byClass
   return(list(model = fit.xg, var = vars, result = result))
 }
+time_out =rep(0,length(namelist))
 
-cl = makeCluster(10)
-registerDoParallel(cl) 
-
-foreach(i = namelist) %dopar% {
-  lapply(x, require, character.only=T)
-  temp =  readRDS(paste("data/",i,".rds",sep = ""))
-  eval(parse(text = paste0(i,"<- temp")))
-  tmp = get(i)
+for(i in 1:length(namelist)){
+  tic()
+  temp =  readRDS(paste("Results/Data/",namelist[i],".rds",sep = ""))
+  eval(parse(text = paste0(namelist[i],"<- temp")))
+  tmp = get(namelist[i])
   train.index <- createDataPartition(tmp$DIQ010, p = 0.6, list= FALSE)
   train.data <- tmp[train.index ,]
   test.data <- tmp[-train.index,]
@@ -108,7 +106,11 @@ foreach(i = namelist) %dopar% {
   test.data=as.matrix(test.data)
   
   result = myxgboost(train.data, test.data)
-  
-  save(result, file=paste0("Xgboost_result/Xgboost_",i, ".RData"))
-  print(paste0("finish for data", i))
+  time_return = toc()
+  save(result, file=paste0("Results/Selection Results/Xgboost_result/Xgboost_",namelist[i], ".RData"))
+  time_out[i] = time_return$toc - time_return$tic
+  print(time_out[i])
+  print(paste0("finish for data", namelist[i]))
 }
+
+save(time_out,file = "Results/Selection Results/Xgboost_result/timeout.RData")
