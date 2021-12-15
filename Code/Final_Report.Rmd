@@ -32,7 +32,7 @@ suppressMessages(library(rpart.plot))
 suppressMessages(library(caret))
 suppressMessages(library(glmnet))
 suppressMessages(library(xgboost)) # the main algorithm # for the sample dataset 
-suppressMessages((Ckmeans.1d.dp)) # for xgb.ggplot.importance
+suppressMessages(library(Ckmeans.1d.dp)) # for xgb.ggplot.importance
 suppressMessages(library(performanceEstimation))
 
 `%!in%` <- Negate(`%in%`)
@@ -41,7 +41,7 @@ suppressMessages(library(performanceEstimation))
 ## Read Data
 ```{r, echo=FALSE}
 # Read original data
-dataRDS = readRDS("Data/AllData_v20211213_1.rds")
+dataRDS = readRDS("Results/Data/AllData_v20211213_1.rds")
 
 # Data cleaning
 dataRDS$DIQ010 = ifelse(dataRDS$DIQ010 %in% c(7,9), NA, dataRDS$DIQ010)
@@ -61,7 +61,7 @@ namelist = paste("Lasso_glmnet_",rep("data",length(year)),year,rep("_",length(ye
 # Store the results in tbl
 tbl=c()
 for(i in namelist){
-  load(paste("Results/",i,".RData",sep = ""))
+  load(paste("Results/Selection Results/Lasso_glmnet_result_20/",i,".RData",sep = ""))
   tbl=rbind(tbl,result$result)
   assign(i,result)
   #eval(parse(text = paste0(i,"= temp")))
@@ -78,7 +78,7 @@ for(i in namelist){
 # Get the common variables
 comvarlasso = unlist(resultvarslasso)
 comvarlasso = sort(table(comvarlasso), decreasing = T)
-comvarlasso = names(comvarlasso[comvarlasso>8])
+#comvarlasso = names(comvarlasso[comvarlasso>8])
 ```
 
 ## Xgboost
@@ -87,7 +87,7 @@ year = seq(1999, 2017,2)
 namelist = paste("Xgboost_",rep("data",length(year)),year,rep("_",length(year)),year+1,sep = "")
 
 for(i in namelist){
-  load(paste("Results/",i,".RData",sep = ""))
+  load(paste("Results/Selection Results/Xgboost_result/",i,".RData",sep = ""))
   tbl=rbind(tbl,result$result)
   assign(i,result)
   #eval(parse(text = paste0(i,"= temp")))
@@ -104,7 +104,7 @@ for(i in namelist){
 # Get the common variables
 comvarxgboost = unlist(resultvarsxgboost)
 comvarxgboost = sort(table(comvarxgboost), decreasing = T)
-comvarxgboost = names(comvarxgboost[comvarxgboost>1])
+#comvarxgboost = names(comvarxgboost[comvarxgboost>1])
 ```
 
 ## Combine 
@@ -115,13 +115,13 @@ namelist = paste(rep("data",length(year)),year,rep("_",length(year)),year+1,sep 
 # Store the important variables
 yearvars= list()
 for(i in namelist){
-    temp = readRDS(paste("Data/",i,".rds",sep = ""))
+    temp = readRDS(paste("Results/Data/",i,".rds",sep = ""))
     yearvars[[i]] = colnames(temp)
 }
 yearvars = unlist(yearvars)
 yearvars = sort(table(yearvars), decreasing = T)
 
-# Calculate variable percentage of frequencies and get the those appears more than 30% times
+# Calculate variable coverage rate: percentages of frequencies
 comvar1 = comvarxgboost/yearvars[names(yearvars)%in%names(comvarxgboost)]
 comvar2 = comvarlasso/yearvars[names(yearvars)%in%names(comvarlasso)]
 comvar1 = names(comvar1[comvar1>0.3])
@@ -164,6 +164,18 @@ probabilities = predict(lmod, newdata = x.test, type = "response")
 predicted.classes = ifelse(probabilities > 0.5, 1, 0)
 
 cm = confusionMatrix(factor(predicted.classes),test.data$DIQ010, positive = "1");cm
+
+# SVM
+fit.svm = svm(DIQ010~., train.data,
+ probability = TRUE,cost = 26)
+pre.svm = predict(fit.svm, test.data,
+ decision.values = TRUE, probability = TRUE)
+#confusion table
+sp <- predict(fit.svm, train.data,
+ decision.values = TRUE, probability = TRUE)
+sm <- confusionMatrix(sp,train.data$DIQ010)
+cm.s<- confusionMatrix(pre.svm,test.data$DIQ010);cm.s
+
 
 # Lasso
 x <- model.matrix(DIQ010~., train.data)[,-1]
@@ -239,4 +251,13 @@ XGprediction <- as.numeric(XGpred>0.5)
 # Use the predicted label with the highest probability
 cmXG<-confusionMatrix(factor(XGprediction),
                       factor(test.label), positive = '1');cmXG
+
+names <- colnames(train.data)
+importance_matrix = xgb.importance(feature_names = names, model = fit.xg)
+
+n.col <- 26
+my.col2 <- colorRampPalette(brewer.pal(8,"Set2"))(n.col)
+xgb.ggplot.importance(importance_matrix)+scale_fill_manual(values = my.col2)+theme_classic()
+
+
 ```
