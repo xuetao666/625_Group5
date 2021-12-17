@@ -100,17 +100,11 @@ knitr::include_graphics("../Results/Confusion_matrix_RF.png")
 
 # 4. Conclusion
 
+## 4.1 Feature Selection: 
+LASSO works great in feature selection while the sensitivities of Xgboost and Random Forest are not consistant and not ideal so the selection result was only considered from the output of LASSO. Features were selected according to at least 50% rate of being selected by the model to the number of years the variables appeared in the data. To make sense of the variables selected from the model and provent multicollinearity, meaningless variables or variables with high correlation with the others were excluded from the selection. We excluded them after feature selection from the model because the data is messy with over 3000 variables, it would be really tedious to check the meaning for each of them.  
 
-* LASSO works great
-* Feature Selection using LASSO/XGBOOST/RF:
-  + Lasso: features that’s important in 9 or 10 years
-  + Xgboost/RF: Sensitivity Result not ideal, the selection result was not considered in the final model
-
-* In order to make the result meaningful, meaningless variables need to be excluded based on selection. The process has been rerun multiple times. -- Data is messy with over 3000+ variables without cleaning, thus, difficult to select by hand. -- Thus use this process.
-
-## 4.1 Computational challenge and solutions:
-
-* High missingess and low overlap on the variables for different year of survey, thus, there is no complete cases if we work on the overall dataset. 
+## 4.1 Computational Challenge and Solutions:
+With over 3000 variables in the whole data, each having different missingnesses and low overlapping with the others, there is no complete case.
   + we chose to separate the analysis for different year and then combine to chose the highly overlapped variables
   + Drawback: Tried PCA/LDA, dimension reduction cannot be applied when we have data separated by year
 
