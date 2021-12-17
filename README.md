@@ -62,21 +62,14 @@ Insert flowchart here:
 ```{r pressure, echo=FALSE, fig.cap="Analysis Approach", out.width = '100%'}
 knitr::include_graphics("../Results/Flowchart.drawio.png")
 ```
+### 2.3.1 Dealing with data problems
+After conducting basic EDA, we found that with over 3000 variabels, each having different missingnesses, there is no complete case in our data. We would not be able to fit models with this data with severe missingness. To deal with both the missing data problem and big data problem, we decided to separate the data into 10 subsets according to the year that the data was collected. Then in each year, we only kept the variabels with missingness less than 20%. After conduting feature selection in each year period, we would then combine the variables selected by the methods. 
 
-After conducting basic EDA, we found that with over 3000 variabels, each having different missingnesses, there is no complete case in our data. We would not be able to fit models with this data with severe missingness. To deal with both the missing data problem and big data problem, we decided to separate the data in 10 subsets according to the year that the data was collected. Then in each year, we only keep the variabels with missingness less than 20%. 
+Another severe problem in our data is imbalancedness. The ratio of observations haivng or not having diabetes is 1:11, which leads to a severe imbalanced data problem. To deal with the imbalanced data issue, Synthetic Minority Oversampling Technique (SMOTE) was used. SMOTE is a commonly used method to oversample the observations in the minority group. In SMOTE, the k-nearest neighbors of each observation in the minority group are obtained by calculating the Euclidian distance between each observation and the other samples in the minority group. 
 
+To keep our test data clean and prevent test data being mixed with training data, the SMOTE technique was only used in the training data. We separated the training data set and test data set first and then apply SMOTE to the training data set. 
 
-Oversampling the minority group by Synthetic Minority Oversampling Technique:
-In our data, the ratio of observations haivng or not having diabetes is 1:11, which leads to a severe imbalanced data problem. To deal with the imbalanced data issue, Synthetic Minority Oversampling Technique (SMOTE) was used. SMOTE is a commonly used method to oversample the observations in the minority group. In SMOTE, the k-nearest neighbors of each observation in the minority group are obtained by calculating the Euclidian distance between each observation and the other samples in the minority group. 
-
-
-
-
-* To keep our test data clean and prevent test data being mixed with training data, the SMOTE technique was only used in the training data. We separated the training data set and test data set first and then apply SMOTE to the training data set. 
-
-
-
-### 2.3.3 Comparing differenct feature selection methods:
+### 2.3.2 Comparing differenct feature selection methods:
 * The feature selection methods selected include LASSO, Xgboost, and Random Forest.  
 
 # 3. Results
