@@ -67,7 +67,7 @@ knitr::include_graphics("../Results/Flowchart.drawio.png")
 
 Key points:
 * Oversampling using SMOTE
-* Only train data has been SMOTE
+* To keep our test data clean and prevent test data being mixed with training data, as smote is similar to copy and pasting the original data.
 
 
 # 3. Results
@@ -141,4 +141,5 @@ Following table is the comparision between different model fits using the variab
 
 * Try the same process on less-missingness data
 * Try imputation on the missing variables
+* Would there be anyway to improve RandomForest/SVM etc. so that they could handle imbalanced data better.
 
