@@ -12,6 +12,8 @@ Xueting Tao, Jinhao Wang, Yili Wang, Dongyang Zhao
 - Method codes.R:
   - a. LASSO.R: Lasso method used in cluster
   -  b. XGBOOST.R: XGBoost method used in cluster
+  -  c. RF.R: Random Forest method used in cluster
+- Graphics.R: Graphis and results tables generating function (Since running the final model and generating result table and graphs cost longer than expected, we chose to put the codes to generate the table into seperate R file and use RMD to read in the results)
 - Final_Report.rmd: Used for readin previous result and generate final report
 
 #################################################################################################################################################################################
