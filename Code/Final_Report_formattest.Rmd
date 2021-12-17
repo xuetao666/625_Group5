@@ -54,6 +54,7 @@ knitr::include_graphics("../Results/Flowchart.drawio.png")
 
 Key points:
 * Oversampling using SMOTE
+* Only train data has been SMOTE
 
 
 # 3. Results
@@ -112,6 +113,8 @@ Following table is the comparision between different model fits using the variab
 * Figured the imbalance data problem ### 1:11
   + Talk about difference between class weights and SMOTE
   + Oversampling using SMOTE 
+  + Since we don't want to have overlap in test and train data, we smote the data after separating the train/test dataset. Only train data has been smote
+  + After SMOTE, all the sensitivity from different method increase, however, the results from Random Forest and XGBoost still didn't ideal(most have sensitivity less than 0.5). Thus, we choose to only use the LASSO result as our selection results.
 * Separate Data by year:no complete case in the overall dataset, some of the variables in the NHANES have different names throughout the years.
   + so we only chose those variables with missingness less than 10%.
   + Drawback: give us even larger datasets
