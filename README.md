@@ -66,10 +66,12 @@ Insert flowchart here:
 ```{r pressure, echo=FALSE, fig.cap="Analysis Approach", out.width = '100%'}
 knitr::include_graphics("../Results/Flowchart.drawio.png")
 ```
-### 2.3.1 Different techniques used:
+### 2.3.1 Oversampling the minority group by Synthetic Minority Oversampling Technique:
 * Oversampling using SMOTE: In our response variable, the ratio of "No" to "Yes" is 11:1, which leads to a severe imbalanced data problem. To deal with the imbalanced data issue, Synthetic Minority Oversampling Technique (SMOTE) was used. SMOTE is a commonly used method to oversample the observations in the minority group. In SMOTE, the k-nearest neighbors of each observation in the minority group are obtained by calculating the Euclidian distance between each observation and the other samples in the minority group. 
 * To keep our test data clean and prevent test data being mixed with training data, the SMOTE technique was only used in the training data. We separated the training data set and test data set first and then apply SMOTE to the training data set. 
 
+### 2.3.2 Comparing differenct feature selection methods:
+* 
 
 # 3. Results
 
