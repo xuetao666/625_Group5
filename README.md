@@ -62,16 +62,14 @@ Insert flowchart here:
 ```{r pressure, echo=FALSE, fig.cap="Analysis Approach", out.width = '100%'}
 knitr::include_graphics("../Results/Flowchart.drawio.png")
 ```
-### 2.3.1 Dealing with data problems
-The Dataset we used is the National Health and Nutrition Examination Survey (NHANES) from CDC. We used the data range from 1999-2018 which collected every 2 years so that totally we have 10 different groups of data. In each group, we used demographic and questionnaire related data to predict diabetes in our study.  
-We combine 10 groups of data to get a whole large dataset with over 3000 variables, and we would like to use some variable selection method to find out the variables which contribute the most on predicting diabetes. After conducting basic EDA, we found that with over 3000 variabels, each having different missingnesses, there is no complete case in our data and there are less than 200 variables which have less than 20% missing value. We didn’t want to directly give up so many variables. Instead of modeling on whole dataset, we will predict the diabetes in each year group. We only kept the variables with less than 20% missing value. After conducting feature selection in groups, we would then combine the variables which contributes the most in each group.
 
-Another severe problem in our data is imbalancedness. The ratio of positive to negative class in response is 11:1. To deal with the imbalanced data issue, Synthetic Minority Oversampling Technique (SMOTE) was used. SMOTE is a commonly used resampling method to rebalanced response variable to get a better performance on predictive model. To avoid the overfitting condition, we split data into training and testing and rebalanced response variable and fit our model only on training part and evaluate our final model on testing part. 
+The dataset we used is the National Health and Nutrition Examination Survey (NHANES) from CDC. We used data ranging from 1999-2018, which were collected every two years so that in total we have ten different groups of two-years data. In each group, we used demographic and questionnaire related variables to predict diabetes in our study.  
 
-To keep our test data clean and prevent test data being mixed with training data, we separated the training data set and test data set first and then only apply the SMOTE technique to the training data set.
+In the whole dataset with over 3000 variables, each having different missingness, there was no complete case in our data. Moreover, there were less than 200 variables with less than 20% missing values. To prevent excluding potentially useful variables and keep as many observations as possible, instead of modelling on the whole dataset, we predicted diabetes in each group. After conducting feature selection by every two years, we combined the variables which contributed the most in each group.  
 
-### 2.3.2 Comparing differenct feature selection methods:
-The feature selection methods in our project include LASSO, Xgboost, and Random Forest. By applying those methods to our data of 10 groups, we not only obtained sets of variabels selected by the methods, we were also able to compare the sensitivities, specificities, accuracies, and time elapsed among the three models. Based on the performances of the three methods, we determined which variables should be furthur selected. Furthermore, we also checked the meaning of those variables selected to prevent problem of multicollinearity. After determing the final variable set, we wanted to know if those variables would perform well in our overall data using the three different fitting methods. Thus we fit the three models again using our finally selected variabels. 
+Another problem we met was that our data was imbalanced.  The ratio of positive to negative class in response was 1:11. Synthetic Minority Oversampling Technique (SMOTE) was introduced to deal with the imbalanced data issue. SMOTE is a commonly used oversampling method to rebalance the response variable for better performance on predictive models. To avoid overfitting, we partitioned data into training and testing data and applied SMOTE to rebalance the response variable.
+ 
+The feature selection methods in our project include LASSO, Xgboost, and Random Forest. By applying those methods to our data of 10 groups, we not only obtained sets of variabels selected by the methods, we were also able to compare the sensitivities, specificities, accuracies, and time elapsed among the three models. Based on the performances of the three methods, we determined which variables should be furthur selected. Furthermore, we also checked the meaning of those variables selected to prevent problem of multicollinearity. After determing the final variable set, we wanted to know if those variables would perform well in our overall data using the three different fitting methods. Thus we fit the three models again using our finally selected variabels.  
 
 # 3. Results
 
@@ -96,7 +94,7 @@ knitr::include_graphics("../Results/Var_meaning.png")
 
 
 ## 3.2 Model comparision
-The following confusion matrices compare our final models fitted using the selected variables shown above. Overall, Logistic regression, LASSO Logistic Regression and XGBoost all produced similar results. Both logistic regression types had a slight advantage in sensitivity, where XGBoost shows higher specificity.
+The following confusion matrices compare our final models fitted using the selected variables shown above. Overall, Logistic regression, LASSO Logistic Regression, Random Forest and XGBoost all produced similar results. Both logistic regression types had a slight advantage in sensitivity, where Random Forest and XGBoost showed higher specificity.
 
 
 
