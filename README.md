@@ -95,7 +95,7 @@ knitr::include_graphics("../Results/Var_meaning.png")
 
 
 ## 3.2 Model comparision
-Following table is the comparision between different model fits using the variables selected above. Overall, LASSO and XGBoost have similar results. Since random forest took longer than expected(), thus we stopped the process.
+The following confusion matrices compare our final models fitted using the selected variables shown above. Overall, Logistic regression, LASSO Logistic Regression and XGBoost all produced similar results. Both logistic regression types had a slight advantage in sensitivity, where XGBoost shows higher specificity.
 
 
 
