@@ -58,7 +58,7 @@ knitr::include_graphics("../Results/Flowchart.drawio.png")
 ## 3.1 Feature Selection
 Following is the sensitivity and specificity results for each year using different methods in the variable selection process.
 
-```{r Sensitivity, echo=FALSE, fig.cap="Sensitivity, Specificity and Accurancy by year",out.width = '100%'}
+```{r Sensitivity, echo=FALSE, fig.cap="Sensitivity, Specificity and Accurancy by year",out.width = '100%',out.height="60%"}
 knitr::include_graphics("../Results/Sensitivity_spec_byyear.png")
 ```
 
@@ -80,7 +80,7 @@ Based on the results, we found that Age(RIDAGEYR),Overall Health(HUQ010),BMI(BMX
 
 The following confusion matrices compare our final models fitted using the selected variables shown above. Overall, Logistic regression, LASSO Logistic Regression, Random Forest and XGBoost all produced similar results. Both logistic regression types had a slight advantage in sensitivity, where Random Forest and XGBoost showed higher specificity.
 
-```{r, echo=FALSE,fig.cap="Confusion Matrix", fig.show="hold", out.width="50%"}
+```{r, echo=FALSE,fig.cap="Confusion Matrix", fig.show="hold", out.width="30%"}
 knitr::opts_chunk$set(fig.pos = 'H')
 knitr::include_graphics("../Results/Confusion_matrix_log.png")
 knitr::include_graphics("../Results/Confusion_matrix_lasso.png")
@@ -110,9 +110,9 @@ One of the biggest problem in our data is imbalances. Although we tried oversamp
 Another limitation in our data is large missingness. Due to lack of knowledge in missing data, we only used complete cases in our project, which may cause to loosing some information. We also hope to find a way to deal with the large missingness in our data and apply our models again. 
 
 # 5 Group contribution
-Xueting Tao:
+Xueting Tao: Downloading the data, data cleaning and merging, finalize the final report.
 Jinhao Wang:
 Yili Wang:
-Dongyang Zhao:
+Dongyang Zhao: 
 
 
