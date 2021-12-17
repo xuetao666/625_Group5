@@ -104,26 +104,9 @@ knitr::include_graphics("../Results/Confusion_matrix_RF.png")
 Based on our result, it is obviously that LASSO works great in feature selection while the sensitivities of Xgboost and Random Forest are not consistent and not ideal. Thus, selection result was only considered from the output of LASSO. Features were selected according to at least 50% rate of being selected by the model to the number of years the variables appeared in the data. To make sense of the variables selected from the model and prevent multicollinearity, meaningless variables or variables with high correlation with the others were excluded from the selection. Since overall,there is around 3,000 variables needs to be selected, it is difficult to check if the definition is meaningful by hand one by one. Thus, we decided to first run the whole selection process, and then check the variables selected in the process. If the variable is not meaningful, we remove that from the data cleaning process and run the whole selection again. This process has saved us lots of labor. 
 
 ## 4.2 Computational Challenge and Solutions:
-With over 3000 variables in the whole data, each having different missingnesses and low overlapping with the others, there is no complete case.
-  + we chose to separate the analysis for different year and then combine to chose the highly overlapped variables
-  + Drawback: Tried PCA/LDA, dimension reduction cannot be applied when we have data separated by year
-
-* Figured the imbalance data problem ### 1:11
-  + Talk about difference between class weights and SMOTE
-  + Oversampling using SMOTE 
-  + Since we don't want to have overlap in test and train data, we smote the data after separating the train/test dataset. Only train data has been smote
-  + After SMOTE, all the sensitivity from different method increase, however, the results from Random Forest and XGBoost still didn't ideal(most have sensitivity less than 0.5). Thus, we choose to only use the LASSO result as our selection results.
-  + Separate Data by year:no complete case in the overall dataset, some of the variables in the NHANES have different names throughout the years.
-  + so we only chose those variables with missingness less than 10%.
-  + Drawback: give us even larger datasets
-  
-* Feature selection is slow:
-  + pack feature selection as separate functions and run on cluster
-  
-* Overall around 3,000 variables needed to be selected, difficult to clean by hand.
-  + Thus, we first select, then based on the selection results, clean out meaningless variables and possible colinearities(like age in month & age in year)
-  + After cleaning, we run the selection again until the selected variables are all meaningful.
-  + Drawback: Saves labor but cost more time on running.
+Since there is high missingess and low overlap on the variables for different year of survey, thus, there is no complete cases if we work on the overall dataset. Thus, we decided to separate the analysis for different year and then combine to chose the highly overlapped variables. However, by using this approach, we found that PCA/LDA cannot be applied.
+As we have mentioned above, the outcome of interests in our dataset is highly unbalanced, which results in low sentivity in the feature selection process. After literature research, we decided to apply SMOTE for oversampling. Since we don't want to have overlap in test and train data, we smote the data after separating the train/test dataset. Only train data has been SMOTE. After SMOTE, all the sensitivity from different method increase, however, the results from Random Forest and XGBoost still didn't ideal(most have sensitivity less than 0.5). Thus, we choose to only use the LASSO result as our selection results.This have solve our imbalance data problem but it gives us an even larger datasets
+During the process, we found that our feature selection is slow. Thus, we decided to pack the feature selection as separate functions and run the feature selection on the cluster. This saves us a lot of time and allow us to work separately together. 
   
 ## 4.3 Future works
 
