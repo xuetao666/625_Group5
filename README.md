@@ -27,21 +27,30 @@ With a high prevalence of overweight individuals growing in the US, there is a t
 ## 2.1 Study Population
 The Dataset we used is the National Health and Nutrition Examination Survey (NHANES), a program of studies designed to assess the health and nutritional status of adults and children in the United States,provided by the Centers for Disease Control and Prevention (CDC). The data range from 1999-2018, each with two years of a cross-sectional study. Different individuals were enrolled every two years. Variables are classified in demographic, dietary, examination, laboratory, and questionnaire areas.
 
-## 2.2 Variables of selection
-### 2.2.1 Outcome of Prediction
-Diabetes was defined as “Doctor told you have diabetes”(named as DIQ010 in the NHANES dataset). 1 refers to Yes, 2 refers to No, 3 refers to Borderline, 7 refers to Refused, 9 refers to don’t know. Yes and Borderline were combined as “Yes”, 7, 9 and NA were excluded from the analysis. The variable was then releveled to 0 and 1: 1 being Yes and 0 being No.
-
-### 2.2.2 Inclusion And Exclusion Criteria for variable selection
-
+## 2.2 Data Cleaning
 * Drop datasets without Sequence ID information
-* Select the subset with information appearing in more or equals to 10 year period. 
-* Use easy-to-obtain dataset: Demographic, Questionnaires and easy examination like Weight, Height, Oral, Vision and Audiometry.
+* Select the subset with information appearing in more or equals to 10 year period. （我们不是很确定这个是什么意思，是data吗还是variables）
+* Use easy-to-obtain variabels: Demographic, Questionnaires and easy examination like Weight, Height, Oral, Vision and Audiometry.
 * Variables in the Diabetes questionnaire was dropped, only keep DIQ010 as outcome.
 * survey weights related variables were excluded.
 * Variables with missingness more than 20% each year period was dropped.
 * Remove all levels(factor) == 1 variable/constant variable for each year period
 * After selection by year, we first select that variables that have a higher than 50% coverage rate, then exclude the variables that have overall missingness more than 10,000.
 * Complete cases was kept in the final model.
+
+
+## 2.3 Selection of Variables
+### 2.3.1 Response Variable
+Diabetes was defined as “Doctor told you have diabetes”(named as DIQ010 in the NHANES dataset). 1 refers to Yes, 2 refers to No, 3 refers to Borderline, 7 refers to Refused, 9 refers to don’t know. Yes and Borderline were combined as “Yes”, 7, 9 and NA were excluded from the analysis. The variable was then releveled to 0 and 1: 1 being Yes and 0 being No.
+
+### 2.3.2 Oversampling the minority group by Synthetic Minority Oversampling Technique:
+After conducting basic EDA of the response variabels, we found that the ratio of observations haivng or not having diabetes is 1:11, which leads to a severe imbalanced data problem. To deal with the imbalanced data issue, Synthetic Minority Oversampling Technique (SMOTE) was used. SMOTE is a commonly used method to oversample the observations in the minority group. In SMOTE, the k-nearest neighbors of each observation in the minority group are obtained by calculating the Euclidian distance between each observation and the other samples in the minority group. 
+
+### 2.3.3 Selection of Prediction Vatiables
+
+
+* To keep our test data clean and prevent test data being mixed with training data, the SMOTE technique was only used in the training data. We separated the training data set and test data set first and then apply SMOTE to the training data set. 
+
 
 ## 2.3 Analysis Approach
 
@@ -66,12 +75,11 @@ Insert flowchart here:
 ```{r pressure, echo=FALSE, fig.cap="Analysis Approach", out.width = '100%'}
 knitr::include_graphics("../Results/Flowchart.drawio.png")
 ```
-### 2.3.1 Oversampling the minority group by Synthetic Minority Oversampling Technique:
-* Oversampling using SMOTE: In our response variable, the ratio of "No" to "Yes" is 11:1, which leads to a severe imbalanced data problem. To deal with the imbalanced data issue, Synthetic Minority Oversampling Technique (SMOTE) was used. SMOTE is a commonly used method to oversample the observations in the minority group. In SMOTE, the k-nearest neighbors of each observation in the minority group are obtained by calculating the Euclidian distance between each observation and the other samples in the minority group. 
-* To keep our test data clean and prevent test data being mixed with training data, the SMOTE technique was only used in the training data. We separated the training data set and test data set first and then apply SMOTE to the training data set. 
 
-### 2.3.2 Comparing differenct feature selection methods:
-* 
+
+### 2.3.2
+### 2.3.3 Comparing differenct feature selection methods:
+* The feature selection methods selected include LASSO, Xgboost, and Random Forest.  
 
 # 3. Results
 
