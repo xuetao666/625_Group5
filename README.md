@@ -70,7 +70,13 @@ Another severe problem in our data is imbalancedness. The ratio of observations 
 To keep our test data clean and prevent test data being mixed with training data, the SMOTE technique was only used in the training data. We separated the training data set and test data set first and then apply SMOTE to the training data set. 
 
 ### 2.3.2 Comparing differenct feature selection methods:
-* The feature selection methods selected include LASSO, Xgboost, and Random Forest.  
+* The feature selection methods selected include LASSO, Xgboost, and Random Forest. 
+
+### 2.3.3 
+The Dataset we used is the National Health and Nutrition Examination Survey (NHANES) from CDC. We used the data range from 1999-2018 which collected every 2 years so that totally we have 10 different groups of data. In each group, we used demographic and questionnaire related data to predict diabetes in our study.  
+We combine 10 groups of data to get a whole large dataset with over 3000 variables, and we would like to use some variable selection method to find out the variables which contribute the most on predicting diabetes. After exploring dataset, we found that with over 3000 variables, there is no complete case in our data. And there are less than 200 variables which have less than 20% missing value. We didn’t want to directly give up so many variables. Instead of modeling on whole dataset, we will predict the diabetes in each group.  We only kept the variables with less than 20% missing value. After conducting feature selection in groups, we would then combine the variables which contributes the most in each group.
+Another problem we met is our data is imbalance.  The ratio of positive to negative class in response is 11:1. To deal with the imbalanced data issue, Synthetic Minority Oversampling Technique (SMOTE) was used. SMOTE is a commonly used resampling method to rebalanced response variable to get a better performance on predictive model. To avoid the overfitting condition, we split data into training and testing and rebalanced response variable and fit our model only on training part and evaluate our final model on testing part. 
+
 
 # 3. Results
 
