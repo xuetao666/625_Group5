@@ -3,8 +3,8 @@
 Xueting Tao, Jinhao Wang, Yili Wang, Dongyang Zhao
 
 ## Data source:
-- NHANES data between year 1999-2018 were used in this project. Since the overall data is big and complicated, we only kept the cleaned version in the github. However, the code used to clean the data was named as Datacleaning.R, under ./Code folder
-- Dataset that were used in the analysis was highed under ./Reference/Codebook for datatable V2.xlsx. 
+- NHANES data between year 1999-2018 were used in this project. Since the original data were complicated and could not be used directly, the data were later modified and kept in github. The code used to clean the data was named as Datacleaning.R, under ./Code folder
+- Dataset that were used in the analysis was highed under ./Reference/Codebook for datatable V2.xlsx. ???
 
 ## Code Order and explaination:
 - Data_cleaning.R: read and clean raw NHANES data, output to Result/Data/
@@ -29,7 +29,7 @@ The Dataset we used is the National Health and Nutrition Examination Survey (NHA
 
 ## 2.2 Variables of selection
 ### 2.2.1 Outcome of Prediction
-Diabetes was defined as “Doctor told you have diabetes”(named as DIQ010 in the NHANES dataset). 1 refers to Yes, 2 refers to No, 3 refers to Borderline, 7 refers to Refused, 9 refers to don’t know. Yes and Borderline were combined as “Yes”, 7, 9 and NA were excluded from the analysis.
+Diabetes was defined as “Doctor told you have diabetes”(named as DIQ010 in the NHANES dataset). 1 refers to Yes, 2 refers to No, 3 refers to Borderline, 7 refers to Refused, 9 refers to don’t know. Yes and Borderline were combined as “Yes”, 7, 9 and NA were excluded from the analysis. The variable was then releveled to 0 and 1: 1 being Yes and 0 being No.
 
 ### 2.2.2 Inclusion And Exclusion Criteria for variable selection
 
