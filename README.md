@@ -64,8 +64,7 @@ Insert flowchart here:
 ```{r pressure, echo=FALSE, fig.cap="Analysis Approach", out.width = '100%'}
 knitr::include_graphics("../Results/Flowchart.drawio.png")
 ```
-
-Key points:
+### 2.3.1 Different techniques used:
 * Oversampling using SMOTE
 * To keep our test data clean and prevent test data being mixed with training data, as smote is similar to copy and pasting the original data.
 
