@@ -19,17 +19,18 @@ Xueting Tao, Jinhao Wang, Yili Wang, Dongyang Zhao
 #################################################################################################################################################################################
 For Report draft
 
+
 # 1. Background and Objectives
 
-With a high prevalence of overweight individuals growing in the US, there is a trend of increasing prevalence in diabetes as well. To better control and prevent the development of diabetes, we aim to discover the most significant covariates and find the best machine learning algorithm for predicting diabetes, thus could give individuals prevention ideas and help with earlier diagnosis of diabetes.
+With a high prevalence of overweight individuals growing in the US, there is a trend of increasing prevalence in diabetes as well. To better control and prevent the development of diabetes, we aim to discover the most significant covariates and find the best machine learning algorithm for predicting diabetes, thus could give individual prevention ideas and help with earlier diagnosis of diabetes.
 
 # 2. Method
 ## 2.1 Study Population
-The Dataset we used is the National Health and Nutrition Examination Survey (NHANES), a program of studies designed to assess the health and nutritional status of adults and children in the United States,provided by the Centers for Disease Control and Prevention (CDC). The data range from 1999-2018, each with two years of a cross-sectional study. Different individuals were enrolled every two years. Variables are classified in demographic, dietary, examination, laboratory, and questionnaire areas.
+The Dataset we will be using is the National Health and Nutrition Examination Survey (NHANES), a program of studies designed to assess the health and nutritional status of adults and children in the United States,provided by the Centers for Disease Control and Prevention (CDC). The data range from 1999-2018, each with two years of a cross-sectional study. Different individuals were enrolled every two years. Data includes demographic, dietary, examination, laboratory, and questionnaire data.
 
-## 2.2 Data Cleaning
+## 2.2 Data cleaning
 * Drop datasets without Sequence ID information
-* Select the subset with information appearing in more or equals to 10 year period. （我们不是很确定这个是什么意思，是data吗还是variables）
+* Select the datasets with information appearing in more or equals to 10 year period.
 * Use easy-to-obtain variabels: Demographic, Questionnaires and easy examination like Weight, Height, Oral, Vision and Audiometry.
 * Variables in the Diabetes questionnaire was dropped, only keep DIQ010 as outcome.
 * survey weights related variables were excluded.
@@ -41,64 +42,56 @@ The Dataset we used is the National Health and Nutrition Examination Survey (NHA
 
 ## 2.3 Analysis Approach
 
-The following analysis approach was taken for the overall analysis
-
-```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE}
-rm(list=ls(all=TRUE))  #same to clear all in stata
-cat("\014")
-x<-c("ggplot2","cowplot","magick")
-new.packages<-x[!(x %in% installed.packages()[,"Package"])]
-if(length(new.packages)) install.packages(new.packages)
-
-lapply(x, require, character.only=T)
-coalesce <- function(...) {
-  apply(cbind(...), 1, function(x) {
-    x[which(!is.na(x))[1]]
-  })
-}
-```
-
-Insert flowchart here:
-```{r pressure, echo=FALSE, fig.cap="Analysis Approach", out.width = '100%'}
-knitr::include_graphics("../Results/Flowchart.drawio.png")
-```
-
-The dataset we used is the National Health and Nutrition Examination Survey (NHANES) from CDC. We used data ranging from 1999-2018, which were collected every two years so that in total we have ten different groups of two-years data. In each group, we used demographic and questionnaire related variables to predict diabetes in our study.  
-
 In the whole dataset with over 3000 variables, each having different missingness, there was no complete case in our data. Moreover, there were less than 200 variables with less than 20% missing values. To prevent excluding potentially useful variables and keep as many observations as possible, instead of modelling on the whole dataset, we predicted diabetes in each group. After conducting feature selection by every two years, we combined the variables which contributed the most in each group.  
 
 Another problem we met was that our data was imbalanced.  The ratio of positive to negative class in response was 1:11. Synthetic Minority Oversampling Technique (SMOTE) was introduced to deal with the imbalanced data issue. SMOTE is a commonly used oversampling method to rebalance the response variable for better performance on predictive models. To avoid overfitting, we partitioned data into training and testing data and applied SMOTE to rebalance the response variable.
  
 The feature selection methods in our project include LASSO, Xgboost, and Random Forest. By applying those methods to our data of 10 groups, we not only obtained sets of variabels selected by the methods, we were also able to compare the sensitivities, specificities, accuracies, and time elapsed among the three models. Based on the performances of the three methods, we determined which variables should be furthur selected. Furthermore, we also checked the meaning of those variables selected to prevent problem of multicollinearity. After determing the final variable set, we wanted to know if those variables would perform well in our overall data using the three different fitting methods. Thus we fit the three models again using our finally selected variabels.  
 
-# 3. Results
+Following analysis approach was taken for the overall analysis
 
-## 3.1 Feature Selection
-Following is the sensitivity and specificity results for each year using different methods in the variable selection process.
-Based on the results, we found that XGBoost and Random Forests have unsatisfiable sensitivity, which gave no reason to include variables selected by the above two methods. As a result, we only kept the variables selected by LASSO.  
-We further reduced the number of variables according to at least a 50 percent selection rate in the years they appeared and less than 10,000 missing values.   
-Here we present the descriptions of each selected variable.
-
-
-
-
-
-```{r varm, echo=FALSE, fig.cap="Variables selected", out.width = '100%'}
-
-# plot_grid(p1, p2)
-
-
-knitr::include_graphics("../Results/Var_meaning.png")
+```{r pressure, echo=FALSE, fig.cap="Analysis Approach", out.width = '100%'}
+knitr::include_graphics("../Results/Flowchart.drawio.png")
 ```
 
 
 
+# 3. Results
+
+## 3.1 Feature Selection
+Following is the sensitivity and specificity results for each year using different methods in the variable selection process.
+
+```{r Sensitivity, echo=FALSE, fig.cap="Sensitivity, Specificity and Accurancy by year",out.width = '100%'}
+knitr::include_graphics("../Results/Sensitivity_spec_byyear.png")
+```
+
+
+Based on the results, we found that XGBoost and Random Forests have unsatisfiable sensitivity, which gave no reason to include variables selected by the above two methods. As a result, we only kept the variables selected by LASSO.  
+We further reduced the number of variables according to at least a 50 percent selection rate in the years they appeared and less than 10,000 missing values.   
+Here we present the descriptions of each selected variable.
+
+Following is the plot showing the overall importance of variables selected.
+
+```{r, echo=FALSE,fig.cap="Variables of selection", fig.show="hold", out.width="50%"}
+knitr::include_graphics("../Results/Importance_matrix.png")
+knitr::include_graphics("../Results/Var_meaning.png")
+```
+
+Based on the results, we found that Age(RIDAGEYR),Overall Health(HUQ010),BMI(BMXBMI),Routine place to go for healthcare(HUQ030) is the most important variables used to predict Diabetes. 
+
 ## 3.2 Model comparision
+
 The following confusion matrices compare our final models fitted using the selected variables shown above. Overall, Logistic regression, LASSO Logistic Regression, Random Forest and XGBoost all produced similar results. Both logistic regression types had a slight advantage in sensitivity, where Random Forest and XGBoost showed higher specificity.
 
-
+```{r, echo=FALSE,fig.cap="Confusion Matrix", fig.show="hold", out.width="50%"}
+knitr::include_graphics("../Results/Confusion_matrix_log.png")
+knitr::include_graphics("../Results/Confusion_matrix_lasso.png")
+knitr::include_graphics("../Results/Confusion_matrix_XGboost.png")
+knitr::include_graphics("../Results/Confusion_matrix_RF.png")
+```
 
 # 4. Conclusion
+
 
 * LASSO works great
 * Feature Selection using LASSO/XGBOOST/RF:
@@ -118,7 +111,7 @@ The following confusion matrices compare our final models fitted using the selec
   + Oversampling using SMOTE 
   + Since we don't want to have overlap in test and train data, we smote the data after separating the train/test dataset. Only train data has been smote
   + After SMOTE, all the sensitivity from different method increase, however, the results from Random Forest and XGBoost still didn't ideal(most have sensitivity less than 0.5). Thus, we choose to only use the LASSO result as our selection results.
-* Separate Data by year:no complete case in the overall dataset, some of the variables in the NHANES have different names throughout the years.
+  + Separate Data by year:no complete case in the overall dataset, some of the variables in the NHANES have different names throughout the years.
   + so we only chose those variables with missingness less than 10%.
   + Drawback: give us even larger datasets
   
@@ -135,4 +128,5 @@ The following confusion matrices compare our final models fitted using the selec
 * Try the same process on less-missingness data
 * Try imputation on the missing variables
 * Would there be anyway to improve RandomForest/SVM etc. so that they could handle imbalanced data better.
+
 
