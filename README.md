@@ -87,9 +87,6 @@ Following is the plot showing the overall importance of variables selected and t
 
 ```{r varm, echo=FALSE, fig.cap="Variables selected", out.width = '100%'}
 
-# p1 <- ggdraw() + draw_image("../Results/Var_meaning1.png", scale = 0.9)
-# p2 <- ggdraw() + draw_image("../Results/Var_meaning2.png", scale = 0.9)
-# 
 # plot_grid(p1, p2)
 
 
