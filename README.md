@@ -88,8 +88,8 @@ Following is the sensitivity and specificity results for each year using differe
 
 
 Following is the sensitivity and specificity results for each year using different methods in the variable selection process.
-Based on the results, we found that XGBoost and Random Forests have unsatisfiable sensitivity, which gave no reason to include variables selected by the above two methods. As a result, we only kept the variables selected by LASSO.
-We further reduced the number of variables according to at least a 50 percent selection rate in the years they appeared and less than 10,000 missing values. 
+Based on the results, we found that XGBoost and Random Forests have unsatisfiable sensitivity, which gave no reason to include variables selected by the above two methods. As a result, we only kept the variables selected by LASSO.  
+We further reduced the number of variables according to at least a 50 percent selection rate in the years they appeared and less than 10,000 missing values.   
 Here we present the descriptions of each selected variable.
 
 
