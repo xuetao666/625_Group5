@@ -12,27 +12,27 @@ knitr::opts_chunk$set(fig.pos = 'H')
 
 # 1. Background and Objectives
 
-With a high prevalence of overweight individuals growing in the US, there is a trend of increasing prevalence in diabetes as well. To better control and prevent the development of diabetes, we aim to discover the most significant covariates and find the best machine learning algorithm for predicting diabetes, thus could give individual prevention ideas and help with earlier diagnosis of diabetes.
+With a high prevalence of overweight individuals growing in the US, there is a trend of increasing prevalence in diabetes. To better control and prevent the development of diabetes, we aim to discover the most significant covariates and find the best machine learning algorithm for predicting diabetes, thus could give individual prevention ideas and help with earlier diagnosis of diabetes.
 
 # 2. Method
 ## 2.1 Study Population
-The Dataset we will be using is the National Health and Nutrition Examination Survey (NHANES), a program of studies designed to assess the health and nutritional status of adults and children in the United States,provided by the Centers for Disease Control and Prevention (CDC). The data range from 1999-2018, each with two years of a cross-sectional study. Different individuals were enrolled every two years. Data includes demographic, dietary, examination, laboratory, and questionnaire data.
+The dataset we will be using is the National Health and Nutrition Examination Survey (NHANES), a program of studies designed to assess adults and children's health and nutritional status in the United States, provided by the Centers for Disease Control and Prevention (CDC). The data range from 1999 to 2018, each with a cross-sectional study of two years. Different individuals were enrolled every two years. Data includes demographic, dietary, examination, laboratory, and questionnaire data.
 
 ## 2.2 Data cleaning
-Data was download from [NHANES website](https://wwwn.cdc.gov/nchs/nhanes/Default.aspx). All the datasets were downloaded from website and then arranged by year and data type(Demographic, Dietary, Examination, Laboratory and Questionnaire). A indicator table was made to check the coverage of each dataset (see "Reference/Codebook for datatables V2.xlsx"). Based on the indicator table, we decided to use the following inclusion/exclusion criteria to choose the datasets to include.
+Data was downloaded from [NHANES website](https://wwwn.cdc.gov/nchs/nhanes/Default.aspx). All the datasets were downloaded from the website and then arranged by year and data type(Demographic, Dietary, Examination, Laboratory and Questionnaire). An indicator table was made to check the coverage of each dataset (see "Reference/Codebook for datatables V2.xlsx"). Based on the indicator table, we decided to use the following inclusion/exclusion criteria to choose the datasets to include.
 
 * Drop datasets without Sequence ID information
-* Select the datasets with information appearing in more or equals to 10 year period.
+* Select the datasets with information appearing in more or equal to 10 year period.
 * Use easy-to-obtain variables: Demographic, Questionnaires and easy examination like Weight, Height, Oral, Vision and Audiometry.
 
-After basic exclusion, we merge the selected datasets and further clean the data exclude the variables based on the following criteria:
+After basic exclusion, we merged the selected datasets and further excluded variables based on the following criteria:
 
-* Variables in the Diabetes questionnaire was dropped, only keep DIQ010 as outcome.
-* survey weights related variables were excluded.
-* Variables with missingness more than 20% each year period was dropped.
+* Drop variables in the Diabetes questionnaire, only keep DIQ010 as the outcome.
+* Exclude survey weights related variables.
+* Drop variables with more than 20% missingness across each two-year period.
 * Remove all levels(factor) == 1 variable/constant variable for each year period
 
-Our outcome variable is defined as:
+Our outcome variable:
 
 * Diabetes was defined as “Doctor told you have diabetes”(named as DIQ010 in the NHANES dataset). 1 refers to Yes, 2 refers to No, 3 refers to Borderline, 7 refers to Refused, 9 refers to don’t know. Yes and Borderline were combined as “Yes”, 7, 9 and NA were excluded from the analysis. The variable was then releveled to 0 and 1: 1 being Yes and 0 being No.
 
@@ -40,13 +40,13 @@ Our outcome variable is defined as:
 
 In the whole dataset with over 3000 variables, each having different missingness, there was no complete case in our data. Moreover, there were less than 200 variables with less than 20% missing values. To prevent excluding potentially useful variables and keep as many observations as possible, instead of modelling on the whole dataset, we predicted diabetes in each group. After conducting feature selection by every two years, we combined the variables which contributed the most in each group.  
 
-Another problem we met was that our data was imbalanced.  The ratio of positive to negative class in response was 1:11. Synthetic Minority Oversampling Technique (SMOTE) was introduced to deal with the imbalanced data issue. SMOTE is a commonly used oversampling method to re-balance the response variable for better performance on predictive models. To avoid over-fitting, we partitioned data into training and testing data and applied SMOTE to re-balance the response variable.
+Another problem we met was that our data was imbalanced.  The ratio of positive to negative class in response was 1:11. Synthetic Minority Oversampling Technique (SMOTE) was introduced to deal with the imbalanced data issue. SMOTE is a commonly used oversampling method to re-balance the response variable for better performance on predictive models. To avoid over-fitting, we partitioned data into training and testing data and applied SMOTE to rebalance the response variable.
  
-The feature selection methods in our project include LASSO, Xgboost, and Random Forest. By applying those methods to our data of 10 groups, we not only obtained sets of variables selected by the methods, we were also able to compare the sensitivities, specificity, accrancies, and time elapsed among the three models. Based on the performances of the three methods, we determined which variables should be further selected. Furthermore, we also checked the meaning of those variables selected to prevent problem of multicollinearity. After determine the final variable set, we wanted to know if those variables would perform well in our overall data using the three different fitting methods. Thus we fit the three models again using our finally selected variables.  
+The feature selection methods in our project include LASSO, Xgboost, and Random Forest. By applying those methods to our data of 10 groups, we obtained the corresponding variables selected by each method and compared the sensitivities, specificity, accuracy, and time elapsed among the three models. We then determined which variables should be further selected based on the performances. Furthermore, we also checked the meaning of those variables selected to prevent the problem of multicollinearity. After determining the final variable set, we wanted to know if those variables would perform well in our overall data using the different machine learning methods. Thus we fit models again using our final selected variables.  
 
-Complete cases was used in the final model. R version 4.1.12 was used for the analysis.
+Complete cases were used in the final model. R version 4.1.12 was used for the analysis.
 
-Following analysis approach was taken for the overall analysis
+Following analysis approach was taken for the overall analysis.
 
 ```{r pressure, echo=FALSE, fig.cap="Analysis Approach", out.width = '100%'}
 knitr::include_graphics("../Results/Flowchart_drawio.png")
@@ -82,7 +82,7 @@ Following is the plot showing the overall importance of variables selected.
 \end{figure}
 
 
-Based on the results, we found that Age(RIDAGEYR),Overall Health(HUQ010),BMI(BMXBMI),Routine place to go for healthcare(HUQ030) is the most important variables used to predict Diabetes. 
+Based on the results, we found that Age(RIDAGEYR), Overall Health(HUQ010), BMI(BMXBMI), Routine place to go for healthcare(HUQ030) are the most important variables used to predict diabetes. 
 
 ## 3.2 Model comparision
 
@@ -98,7 +98,7 @@ knitr::include_graphics(c("../Results/Confusion_matrix_XGboost.png","../Results/
 
 ## 4.1 Feature Selection
 
-Based on our result, it is obviously that LASSO works great in feature selection while the sensitivities of Xgboost and Random Forest are not consistent and not ideal. Thus, selection result was only considered from the output of LASSO. Features were selected according to at least 50% rate of being selected by the model to the number of years the variables appeared in the data. To make sense of the variables selected from the model and prevent multi-collinearity, meaningless variables or variables with high correlation with the others were excluded from the selection. Since overall,there is around 3,000 variables needs to be selected, it is difficult to check if the definition is meaningful by hand one by one. Thus, we decided to first run the whole selection process, and then check the variables selected in the process. If the variable is not meaningful, we remove that from the data cleaning process and run the whole selection again. This process has saved us lots of labor.
+Based on our result, it was evident that LASSO worked great in feature selection while the sensitivities of Xgboost and Random Forest are not consistent and thus not ideal. Therefore, feature selection results were only considered from the output of LASSO. Features were selected according to at least 50% rate of being selected by the model to the number of years the variables appeared in the data. To make sense of the variables selected from the model and prevent multicollinearity, meaningless variables or variables with high correlation with the others were excluded from the selection. Since overall, there were around 3,000 variables that needed to be selected, it would be tedious to check each of the variables manually. Thus, we decided to run the selection process first and then check the selected variables. This process has saved us lots of labour.
 
 ## 4.2 Computational challenge and solutions:
 
