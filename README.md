@@ -87,8 +87,10 @@ Following is the sensitivity and specificity results for each year using differe
 
 
 
-Based on the results, we found that XGBoost and Random Forests have low sensitivity, thus not reasonable to include variabels using these two methods. As a result, for the overall selection, we only include the variables results in LASSO. For LASSO, we chose variables that have at least 50% coverage of the whole year period (1999-2018), also with less than 10,000 missingness.
-Following is the plot showing the overall importance of variables selected and their definition.
+Following is the sensitivity and specificity results for each year using different methods in the variable selection process.
+Based on the results, we found that XGBoost and Random Forests have unsatisfiable sensitivity, which gave no reason to include variables selected by the above two methods. As a result, we only kept the variables selected by LASSO.
+We further reduced the number of variables according to at least a 50 percent selection rate in the years they appeared and less than 10,000 missing values. 
+Here we present the descriptions of each selected variable.
 
 
 
@@ -102,8 +104,6 @@ Following is the plot showing the overall importance of variables selected and t
 knitr::include_graphics("../Results/Var_meaning.png")
 ```
 
-
-Based on the results, we found that ___ is the most importance ..(more interpretation)
 
 
 ## 3.2 Model comparision
@@ -123,7 +123,7 @@ Following table is the comparision between different model fits using the variab
 
 * In order to make the result meaningful, meaningless variables need to be excluded based on selection. The process has been rerun multiple times. -- Data is messy with over 3000+ variables without cleaning, thus, difficult to select by hand. -- Thus use this process.
 
-## 4.1 Computational chanllege and solutions:
+## 4.1 Computational challenge and solutions:
 
 * High missingess and low overlap on the variables for different year of survey, thus, there is no complete cases if we work on the overall dataset. 
   + we chose to separate the analysis for different year and then combine to chose the highly overlapped variables
