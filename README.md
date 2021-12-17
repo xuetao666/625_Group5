@@ -8,7 +8,7 @@ Xueting Tao, Jinhao Wang, Yili Wang, Dongyang Zhao
 
 ## Code Order and explaination:
 - Data_cleaning.R: read and clean raw NHANES data, output to Result/Data/
-- Initial_Method.R: Code used for data and method exploration
+- Initial_Method.R: Code used for data and method exploration( Draft version, just for reference)
 - Method codes:
   - a. LASSO.R: Lasso method used in cluster
   -  b. XGBOOST.R: XGBoost method used in cluster
