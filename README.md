@@ -100,10 +100,7 @@ The following confusion matrices compare our final models fitted using the selec
 
 # 4. Conclusion
 
-
-
-* SVM, DT not ideal in our situation
-* LASSO, XGBOOST works great
+* LASSO works great
 * Feature Selection using LASSO/XGBOOST/RF:
   + Lasso: features that’s important in 9 or 10 years
   + Xgboost/RF: Sensitivity Result not ideal, the selection result was not considered in the final model
