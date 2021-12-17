@@ -111,9 +111,9 @@ During the process, we found that our feature selection is slow. Thus, we decide
 
 ## 4.3 Future works
 
-One of the biggest problems is that our imbalanced data. Although we tried oversampling in the minority group using SMOTE, the results in the feature selection process were still not ideal for Xgboost and Random forest models. It would be of great interest for us if there is any better way to handle the imbalanced data and apply Xgboost and Random Forest again to see if the features selection process of these two models could perform better. On the other hand, as Random Forest and Xgboost are not good at handling imbalanced data and cannot adjust the hyperparameters automatically, we would also be interested in improving the algorithm of these two methods to deal with imbalanced data better in the future.
+One of the biggest problems is that our imbalanced data. Although we tried oversampling in the minority group using SMOTE, the results in the feature selection process were still not ideal for Xgboost and Random forest models. It would be of great interest for us if there is any better way to handle the imbalanced data and apply Xgboost and Random Forest again to see if the features selection process of these two models could perform better. On the other hand, as Random Forest and Xgboost are not good at handling imbalanced data and cannot adjust the hyperparameters automatically, we would also be interested in improving the algorithm of these two methods in the future.
 
-Another limitation in our data is large missingness. Due to our lack of knowledge in missing data, we only used complete cases in our project, which may cause losing some information. We also hope to find a  better way of handling missing data that might improve our overall result.
+Another limitation in our data is large missingness. Due to our lack of knowledge in missing data, we only used complete cases in our project, which may cause losing some information. We also hope to find a better way of handling missing data that might improve our overall result.
 
 # 5 Group contribution
 Xueting Tao: Downloading the data, data cleaning and merging, finalize the final report.
