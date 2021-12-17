@@ -103,7 +103,7 @@ knitr::include_graphics("../Results/Confusion_matrix_RF.png")
 ## 4.1 Feature Selection: 
 LASSO works great in feature selection while the sensitivities of Xgboost and Random Forest are not consistant and not ideal so the selection result was only considered from the output of LASSO. Features were selected according to at least 50% rate of being selected by the model to the number of years the variables appeared in the data. To make sense of the variables selected from the model and provent multicollinearity, meaningless variables or variables with high correlation with the others were excluded from the selection. We excluded them after feature selection from the model because the data is messy with over 3000 variables, it would be really tedious to check the meaning for each of them.  
 
-## 4.1 Computational Challenge and Solutions:
+## 4.2 Computational Challenge and Solutions:
 With over 3000 variables in the whole data, each having different missingnesses and low overlapping with the others, there is no complete case.
   + we chose to separate the analysis for different year and then combine to chose the highly overlapped variables
   + Drawback: Tried PCA/LDA, dimension reduction cannot be applied when we have data separated by year
@@ -125,7 +125,7 @@ With over 3000 variables in the whole data, each having different missingnesses 
   + After cleaning, we run the selection again until the selected variables are all meaningful.
   + Drawback: Saves labor but cost more time on running.
   
-## 4.2 Future works
+## 4.3 Future works
 
 One of the biggest problem in our data is imbalancedness. Although we tried oversampling in the minority group using SMOTE, the result in feature selection process is still not ideal for Xgboost and Random forest. It would be of great interest for us if there is any better way to handle the inbalanced data or if we could have less-missing data and apply Xgboost and Random forest again to see if the features selected by these two models could also work well. On the other hand, as Random Forest and Xgboost are not good at handling imbalanced data, we would also be interested in improving the algorithm of these two methods to deal with imbalanced data better in the future.
 
