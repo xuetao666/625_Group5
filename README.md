@@ -54,6 +54,7 @@ In the whole dataset with over 3000 variables, each having different missingness
 Another problem we met was that our data was imbalanced.  The ratio of positive to negative class in response was 1:11. Synthetic Minority Oversampling Technique (SMOTE) was introduced to deal with the imbalanced data issue. SMOTE is a commonly used oversampling method to rebalance the response variable for better performance on predictive models. To avoid overfitting, we partitioned data into training and testing data and applied SMOTE to rebalance the response variable.
  
 The feature selection methods in our project include LASSO, Xgboost, and Random Forest. By applying those methods to our data of 10 groups, we not only obtained sets of variabels selected by the methods, we were also able to compare the sensitivities, specificities, accuracies, and time elapsed among the three models. Based on the performances of the three methods, we determined which variables should be furthur selected. Furthermore, we also checked the meaning of those variables selected to prevent problem of multicollinearity. After determing the final variable set, we wanted to know if those variables would perform well in our overall data using the three different fitting methods. Thus we fit the three models again using our finally selected variabels.  
+Complete cases was used in the final model. R version 4.1.12 was used for the analysis.
 
 Following analysis approach was taken for the overall analysis
 
