@@ -14,7 +14,8 @@ Xueting Tao, Jinhao Wang, Yili Wang, Dongyang Zhao
   -  b. XGBOOST.R: XGBoost method used in cluster
 - Final_Report.rmd: Used for readin previous result and generate final report
 
-
+#################################################################################################################################################################################
+For Report draft
 
 # 1. Background and Objectives
 
