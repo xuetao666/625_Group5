@@ -118,5 +118,5 @@ Another limitation in our data is large missingness. Due to lack of knowledge in
 * Xueting Tao: Downloading the data, data cleaning and merging, finalizing the final report.
 * Jinhao Wang:
 * Yili Wang: model fitting, graph plotting, report method and conclusion writing. 
-* Dongyang Zhao: 
+* Dongyang Zhao: Running the model on Cluster, report writing. 
 
