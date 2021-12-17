@@ -116,8 +116,8 @@ Another limitation in our data is large missingness. Due to our lack of knowledg
 
 # 5 Group contribution
 Xueting Tao: Downloading the data, data cleaning and merging, finalize the final report.
-Jinhao Wang:
-Yili Wang:
-Dongyang Zhao: 
+Jinhao Wang: Main Data Analysis, finalize the final report.
+Yili Wang: Figure generating, finalize the final report.
+Dongyang Zhao: Cluster and parallel computing, finalize the final report.
 
 
