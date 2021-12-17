@@ -115,8 +115,8 @@ One of the biggest problem in our data is imbalancedness. Although we tried over
 Another limitation in our data is large missingness. Due to lack of knowledge in missing data, we only used complete cases in our project, which may cause to loosing some information. We also hope to find a way to deal with the large missingness in our data and apply our models again. 
 
 # 5 Group contribution
-* Xueting Tao: Downloading the data, data cleaning and merging, finalize the final report.
+* Xueting Tao: Downloading the data, data cleaning and merging, finalizing the final report.
 * Jinhao Wang:
-* Yili Wang:
+* Yili Wang: model fitting, graph plotting, report method and conclusion writing. 
 * Dongyang Zhao: 
 
