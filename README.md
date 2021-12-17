@@ -29,16 +29,23 @@ With a high prevalence of overweight individuals growing in the US, there is a t
 The Dataset we will be using is the National Health and Nutrition Examination Survey (NHANES), a program of studies designed to assess the health and nutritional status of adults and children in the United States,provided by the Centers for Disease Control and Prevention (CDC). The data range from 1999-2018, each with two years of a cross-sectional study. Different individuals were enrolled every two years. Data includes demographic, dietary, examination, laboratory, and questionnaire data.
 
 ## 2.2 Data cleaning
+Data was download from NHANES webset(https://wwwn.cdc.gov/nchs/nhanes/Default.aspx). All the datasets were downloaded from webset and then arranged by year and data type(Demographic, Dietary, Examination, Laboratory and Questionnaire). A indicator table was made to check the coverage of each dataset(see "Reference/Codebook for datatables V2.xlsx"). Based on the indicator table, we decided to use the following inclusion/exclusion cretiera to chose the datasets to include.
+
 * Drop datasets without Sequence ID information
 * Select the datasets with information appearing in more or equals to 10 year period.
 * Use easy-to-obtain variabels: Demographic, Questionnaires and easy examination like Weight, Height, Oral, Vision and Audiometry.
+
+After basic exclusion, we merge the selected datasets and further clean the data exclude the variables based on the following creteira:
+
 * Variables in the Diabetes questionnaire was dropped, only keep DIQ010 as outcome.
 * survey weights related variables were excluded.
 * Variables with missingness more than 20% each year period was dropped.
 * Remove all levels(factor) == 1 variable/constant variable for each year period
-* After selection by year, we first select that variables that have a higher than 50% coverage rate, then exclude the variables that have overall missingness more than 10,000.
-* Complete cases was kept in the final model.
+
+Our outcome variable is defined as:
+
 * Diabetes was defined as “Doctor told you have diabetes”(named as DIQ010 in the NHANES dataset). 1 refers to Yes, 2 refers to No, 3 refers to Borderline, 7 refers to Refused, 9 refers to don’t know. Yes and Borderline were combined as “Yes”, 7, 9 and NA were excluded from the analysis. The variable was then releveled to 0 and 1: 1 being Yes and 0 being No.
+
 
 ## 2.3 Analysis Approach
 
