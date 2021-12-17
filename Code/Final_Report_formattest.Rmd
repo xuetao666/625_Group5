@@ -115,9 +115,8 @@ One of the biggest problems is that our imbalanced data. Although we tried overs
 Another limitation in our data is large missingness. Due to our lack of knowledge in missing data, we only used complete cases in our project, which may cause losing some information. We also hope to find a better way of handling missing data that might improve our overall result.
 
 # 5 Group contribution
-Xueting Tao: Downloading the data, data cleaning and merging, finalize the final report.
-Jinhao Wang: Main Data Analysis, finalize the final report.
-Yili Wang: Figure generating, finalize the final report.
-Dongyang Zhao: Cluster and parallel computing, finalize the final report.
 
-
+* Xueting Tao: Downloading the data, data cleaning and merging, finalize the final report.
+* Jinhao Wang: Main Data Analysis, finalize the final report.
+* Yili Wang: Figure generating, finalize the final report.
+* Dongyang Zhao: Cluster and parallel computing, finalize the final report.
