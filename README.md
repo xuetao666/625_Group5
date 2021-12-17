@@ -3,7 +3,7 @@
 Xueting Tao, Jinhao Wang, Yili Wang, Dongyang Zhao
 
 ## Data source:
-- Data comes from NHANES data, year 1999-2018. Since the overall data is big and complicated, we only keep the cleaned version in the github. However, the code used to clean the data was named as Datacleaning.R, under ./Code folder
+- NHANES data between year 1999-2018 were used in this project. Since the overall data is big and complicated, we only kept the cleaned version in the github. However, the code used to clean the data was named as Datacleaning.R, under ./Code folder
 - Dataset that were used in the analysis was highed under ./Reference/Codebook for datatable V2.xlsx. 
 
 ## Code Order and explaination:
@@ -37,10 +37,10 @@ Diabetes was defined as “Doctor told you have diabetes”(named as DIQ010 in t
 * Select datasets have information in more or equals to 10 year period.
 * Use easy-to-obtain dataset: Demographic, Questionnaires and easy examination like Weight, Height, Oral, Vision and Audiometry.
 * Variables in the Diabetes questionnaire was dropped, only keep DIQ010 as outcome.
-* survy weights related variables were excluded.
+* survey weights related variables were excluded.
 * Variables with missingness more than 20% each year period was dropped.
 * Remove all levels(factor) == 1 variable/constant variable for each year period
-* After selection by year, we first select that variables that have more than 30% of overlap between years, then exclude the variables that have overall missingness more than 10,000.
+* After selection by year, we first select that variables that have a higher than 50% coverage rate, then exclude the variables that have overall missingness more than 10,000.
 * Complete cases was kept in the final model.
 
 ## 2.3 Analysis Approach
