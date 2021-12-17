@@ -34,7 +34,7 @@ Diabetes was defined as “Doctor told you have diabetes”(named as DIQ010 in t
 ### 2.2.2 Inclusion And Exclusion Criteria for variable selection
 
 * Drop datasets without Sequence ID information
-* Select datasets have information in more or equals to 10 year period.
+* Select the subset with information appearing in more or equals to 10 year period. 
 * Use easy-to-obtain dataset: Demographic, Questionnaires and easy examination like Weight, Height, Oral, Vision and Audiometry.
 * Variables in the Diabetes questionnaire was dropped, only keep DIQ010 as outcome.
 * survey weights related variables were excluded.
