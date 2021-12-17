@@ -37,24 +37,11 @@ The Dataset we used is the National Health and Nutrition Examination Survey (NHA
 * Remove all levels(factor) == 1 variable/constant variable for each year period
 * After selection by year, we first select that variables that have a higher than 50% coverage rate, then exclude the variables that have overall missingness more than 10,000.
 * Complete cases was kept in the final model.
-
-
-## 2.3 Selection of Variables
-### 2.3.1 Response Variable
-Diabetes was defined as “Doctor told you have diabetes”(named as DIQ010 in the NHANES dataset). 1 refers to Yes, 2 refers to No, 3 refers to Borderline, 7 refers to Refused, 9 refers to don’t know. Yes and Borderline were combined as “Yes”, 7, 9 and NA were excluded from the analysis. The variable was then releveled to 0 and 1: 1 being Yes and 0 being No.
-
-### 2.3.2 Oversampling the minority group by Synthetic Minority Oversampling Technique:
-After conducting basic EDA of the response variabels, we found that the ratio of observations haivng or not having diabetes is 1:11, which leads to a severe imbalanced data problem. To deal with the imbalanced data issue, Synthetic Minority Oversampling Technique (SMOTE) was used. SMOTE is a commonly used method to oversample the observations in the minority group. In SMOTE, the k-nearest neighbors of each observation in the minority group are obtained by calculating the Euclidian distance between each observation and the other samples in the minority group. 
-
-### 2.3.3 Selection of Prediction Vatiables
-
-
-* To keep our test data clean and prevent test data being mixed with training data, the SMOTE technique was only used in the training data. We separated the training data set and test data set first and then apply SMOTE to the training data set. 
-
+* Diabetes was defined as “Doctor told you have diabetes”(named as DIQ010 in the NHANES dataset). 1 refers to Yes, 2 refers to No, 3 refers to Borderline, 7 refers to Refused, 9 refers to don’t know. Yes and Borderline were combined as “Yes”, 7, 9 and NA were excluded from the analysis. The variable was then releveled to 0 and 1: 1 being Yes and 0 being No.
 
 ## 2.3 Analysis Approach
 
-Following analysis approach was taken for the overall analysis
+The following analysis approach was taken for the overall analysis
 
 ```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE}
 rm(list=ls(all=TRUE))  #same to clear all in stata
@@ -76,8 +63,19 @@ Insert flowchart here:
 knitr::include_graphics("../Results/Flowchart.drawio.png")
 ```
 
+After conducting basic EDA, we found that with over 3000 variabels, each having different missingnesses, there is no complete case in our data. We would not be able to fit models with this data with severe missingness. To deal with both the missing data problem and big data problem, we decided to separate the data in 10 subsets according to the year that the data was collected. Then in each year, we only keep the variabels with missingness less than 20%. 
 
-### 2.3.2
+
+Oversampling the minority group by Synthetic Minority Oversampling Technique:
+In our data, the ratio of observations haivng or not having diabetes is 1:11, which leads to a severe imbalanced data problem. To deal with the imbalanced data issue, Synthetic Minority Oversampling Technique (SMOTE) was used. SMOTE is a commonly used method to oversample the observations in the minority group. In SMOTE, the k-nearest neighbors of each observation in the minority group are obtained by calculating the Euclidian distance between each observation and the other samples in the minority group. 
+
+
+
+
+* To keep our test data clean and prevent test data being mixed with training data, the SMOTE technique was only used in the training data. We separated the training data set and test data set first and then apply SMOTE to the training data set. 
+
+
+
 ### 2.3.3 Comparing differenct feature selection methods:
 * The feature selection methods selected include LASSO, Xgboost, and Random Forest.  
 
