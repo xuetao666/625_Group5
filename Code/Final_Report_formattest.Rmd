@@ -106,7 +106,7 @@ Because of the high missingness and each survey year having its own distinct fea
 
 As we have mentioned above, the outcome of interests in our dataset was highly imbalanced, which results in low sensitivity in the feature selection process. After literature reviews, Synthetic Minority Oversampling Technique (SMOTE) was introduced to deal with the imbalanced data issue. After applying SMOTE to rebalance the response variable, all the sensitivities obtained improved, whereas the results from Random Forest and XGBoost were still dissatisfying, with most sensitivities being less than 0.5. Thus, we only accepted the featured selected by LASSO.
 
-The training process is time consuming since each group of data is in high-dimension. Thus, we try to use parallel feature and Cluster to speed up our selection process. 
+The training process has been time-consuming since we had large high-dimension in each year group. Our solution was to use parallel computation and cluster computing to speed up our selection process. 
 
 ## 4.3 Future works
 
