@@ -133,8 +133,6 @@ knitr::include_graphics("../Results/Confusion_matrix_RF.png")
   
 ## 4.2 Future works
 
-* Try the same process on less-missingness data
-* Try imputation on the missing variables
-* Would there be anyway to improve RandomForest/SVM etc. so that they could handle imbalanced data better.
+One of the biggest problem in our data is imbalancedness. Although we tried oversampling in the minority group using SMOTE, the result in feature selection process is still not ideal for Xgboost and Random forest. It would be of great interest for us if there is any better way to handle the inbalanced data or if we could have less-missing data and apply Xgboost and Random forest again to see if the features selected by these two models could also work well. On the other hand, as Random Forest and Xgboost are not good at handling imbalanced data, we would also be interested in improving the algorithm of these two methods to deal with imbalanced data better in the future. 
 
-
+Another limitation in our data is large missingness. Due to lack of knowledge in missing data, we only used complete cases in our project, which may cause to loosing some information. We also hope to find a way to deal with the large missingness in our data and apply our models again. 
