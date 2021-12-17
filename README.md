@@ -4,7 +4,7 @@ Xueting Tao, Jinhao Wang, Yili Wang, Dongyang Zhao
 
 ## Data source:
 - NHANES data between year 1999-2018 were used in this project. Since the original data were complicated and could not be used directly, the data were later modified and kept in github. The code used to clean the data was named as Datacleaning.R, under ./Code folder
-- Dataset that were used in the analysis was highed under ./Reference/Codebook for datatable V2.xlsx. ???
+- Dataset that were used in the analysis was highlighted under ./Reference/Codebook for datatable V2.xlsx.
 
 ## Code Order and explaination:
 - Data_cleaning.R: read and clean raw NHANES data, output to Result/Data/
