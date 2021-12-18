@@ -92,7 +92,7 @@ yearvars = sort(table(yearvars), decreasing = T)
 comvar = comvarlasso/yearvars[names(yearvars)%in%names(comvarlasso)]
 comvar = names(comvar[comvar>0.5])
 # Remove "RIDAGEEX"
-comvar = comvar[!comvar %in% c("RIDAGEEX","SDMVSTRA", "MCQ010", "DMDHRGND", "DMDHRAGE", "BMXWT", "BMXHT", "HSAQUEX")]
+comvar = comvar[!comvar %in% c("RIDAGEEX","SDMVSTRA", "MCQ010", "DMDHRGND", "DMDHRAGE", "BMXWT", "BMXHT", "HSAQUEX","RIDEXMON")]
 # Include response
 comvar = c("DIQ010", comvar)
 # Select the important variables obtained from Lasso
@@ -225,7 +225,7 @@ for (i in 1:10) {
   time_rfs = c(time_rfs, time_RF[[i]])
 }
 
-namelist = paste(rep("data",length(year)),year,rep("_",length(year)),year+1,sep = "")
+namelist = paste(year,rep("_",length(year)),year+1,sep = "")
 Sensis = data.frame(year = namelist, sens_LASSO = tbl_LASSO[,1], sens_Xgboost = tbl_Xgboost[,1], sens_RF = tbl_RF[,1])
 Specis = data.frame(year = namelist, sens_LASSO = tbl_LASSO[,2], sens_Xgboost = tbl_Xgboost[,2], sens_RF = tbl_RF[,2])
 accus = data.frame(year = namelist, accus_LASSO = tbl_LASSO[,11], accus_Xgboost = tbl_Xgboost[,11], accus_RF = tbl_RF[,11])
@@ -236,31 +236,33 @@ p1 = ggplot(data = Sensis, aes(x = year, group = 1)) + geom_line(aes(y = sens_LA
   geom_line(aes(y = sens_RF, color = "Random Forest")) + 
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
         axis.title.y = element_blank()) + 
-  ylim(0,1) + theme(legend.position="none")+ggtitle("Sensitivities")+theme(plot.margin = unit(c(0,0,0,0), "cm"))
+  ylim(0,1) + theme(legend.position="none")+ggtitle("Sensitivities")+theme(plot.margin = unit(c(0,1,0,0), "cm"))
 
 p2 = ggplot(data = Specis, aes(x = year, group = 1)) + geom_line(aes(y = sens_LASSO, color = "LASSO")) + 
   geom_line(aes(y = sens_Xgboost, color = "Xgboost")) + geom_line(aes(y = sens_RF, color = "Random Forest")) + 
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
         axis.title.y = element_blank(), axis.text.y = element_blank(), 
         axis.ticks.y = element_blank()) + ylim(0,1) + 
-  theme(legend.position="none")+ggtitle("Specificities")+theme(plot.margin = unit(c(0,0,0,0), "cm"))
+  theme(legend.position="none")+ggtitle("Specificities")+theme(plot.margin = unit(c(0,1,0,0), "cm"))
 
 p3 = ggplot(data = accus, aes(x = year, group = 1)) + geom_line(aes(y = accus_LASSO, color = "LASSO")) + 
   geom_line(aes(y = accus_Xgboost, color = "Xgboost")) + geom_line(aes(y = accus_RF, color = "Random Forest")) + 
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
         axis.title.y = element_blank(), axis.text.y = element_blank(), 
         axis.ticks.y = element_blank()) + ylim(0,1) + 
-  theme(legend.position="none")+ggtitle("Accuracies")+theme(plot.margin = unit(c(0,0,0,0), "cm"))
+  theme(legend.position="none")+ggtitle("Accuracies")+theme(plot.margin = unit(c(0,1,0,0), "cm"))
 
 p4 = ggplot(data = times, aes(x = year, group = 1)) + geom_line(aes(y = time_LASSO, color = "LASSO")) + 
   geom_line(aes(y = time_Xgboost, color = "Xgboost")) + geom_line(aes(y = time_RF, color = "Random Forest")) + 
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
         axis.title.y = element_blank()) + 
-  theme(legend.position="top", legend.direction = "vertical") + ggtitle("Time Elapsed")
+  theme(legend.position="right", legend.direction = "vertical") + ggtitle("Time Elapsed(seconds)")+
+  labs(color='Method') +theme(plot.margin = unit(c(0,5,0,0), "cm"))
 
 plot1=plot_grid(p1,p2,p3,ncol = 3,rel_widths = c(1.25,1,1))
-plot=plot_grid(plot1,p4,ncol=2,rel_widths = c(2,1))
+plot=plot_grid(plot1,p4,ncol=1,rel_heights = c(1,1))
 
+plot
 ggsave(
   "../Results/Sensitivity_spec_byyear.png",
   plot = plot,
