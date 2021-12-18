@@ -16,4 +16,4 @@ Xueting Tao, Jinhao Wang, Yili Wang, Dongyang Zhao
 - Plots.R: Since the overall data and results is large, we decided to seperate the Rmarkdown and the script generating plots and tables. All the codes for generating results was saved under here. Used after finish Data_cleaning.R and Method codes.
 - Final_Report.Rmd: Used for readin previous result and generate final report
 
-The correct sequence of running the program is Data_cleaning.R --> Method codes --> Plots.R --> Final_Report_formattest.Rmd 
+The correct sequence of running the program is Data_cleaning.R --> Method codes --> Plots.R --> Final_Report.Rmd 
